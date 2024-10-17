@@ -1,0 +1,176 @@
+* {
+	min-height: 0;
+}
+
+body {
+    border: none;
+    border-radius: 0px;
+    /* `otf-font-awesome` is required to be installed for icons */
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
+window#waybar {
+    background-color: transparent;
+    color: black;
+    transition-property: background-color;
+    transition-duration: .5s;
+    margin: 10px;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+#window,
+#workspaces {
+    margin: 0px 0px;
+}
+
+#workspaces {
+    color: white;
+    padding: 0px 10px;
+    border-radius: 20px;
+
+    background: rgba(32, 32, 32, .5);
+    border: 1px solid rgba(32, 32, 32, .5);
+}
+
+#workspaces button {
+    background: #878787;
+    color: #000;
+    margin: 10px 5px;
+    padding: 0px 4px;
+    border-radius: 10px;
+    font-size: 10px;
+    transition-duration: .15s;
+}
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+#workspaces button:hover {
+    background: lightblue;
+    color: black;
+}
+
+#workspaces button.active {
+	background: white;
+	min-width: 30px;
+	font-weight: bold;
+	transition-duration: .15s;
+}
+
+#workspaces button.focused {
+    background: #1f1f1f;
+}
+
+#workspaces button.focused:hover {
+    background: lightblue;
+    color: black;
+    border-bottom: 3px solid black;
+
+}
+
+#workspaces button.urgent {
+    background-color: #eb4d4b;
+    color: white;
+    font-weight: bold;
+}
+
+#mode {
+    background-color: #64727D;
+    border-bottom: 3px solid black;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#network,
+#pulseaudio,
+#custom-clipboard,
+#custom-media,
+#custom-layout,
+#custom-updater,
+#custom-snip,
+#taskbar,
+#tray,
+#mode,
+#idle_inhibitor,
+#mpd,
+#window {
+    padding: 0 10px;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+
+    background: rgba(32, 32, 32, .5);
+    border: 1px solid rgba(32, 32, 32, .5);
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0px;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0px;
+}
+
+@keyframes blink {
+    to {
+        background-color: black;
+        color: #000000;
+    }
+}
+
+/* ADDITIONAL CONFIGS FOR ELEMENTS */
+
+#clock {
+    margin-right: 10px;
+}
+
+#cpu {
+	margin-left: 10px;
+}
+
+label:focus {
+    background-color: #000000;
+}
+
+#network.disconnected {
+    background-color: #ff4d4d;
+    color: black;
+}
+
+#temperature.critical {
+    background-color: #eb4d4b;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+    border: #FA8BFF 10px;
+    color: black;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #ff9f40;
+    border: none;
+    color: black;
+}
+
+#idle_inhibitor {
+    background-color: #ff4d4d;
+    color: white;
+    border-radius: 0px 5px;
+
+}
+
+#idle_inhibitor.activated {
+    background-color: #4dff4d;
+    color: black;
+}
+
