@@ -18,6 +18,7 @@ in
 	  	localsend
 	  	mpv
 	  	thunderbird
+	  	vscodium
 	  	
 	  	# CLI Utilities
 	  	ffmpeg
@@ -75,17 +76,8 @@ in
     		fi
   	'';
 	
-	# Some applications will not use Wayland by default, so we'll need to inject command line arguments to get them to run natively
+	# This is mainly for applications that do not come with their own desktop files
 	xdg.desktopEntries = {
-		# Discord
-		armcord = {
-			name = "ArmCord";
-			exec = "${pkgs.armcord}/bin/armcord ${settings.WAYLAND_CHROMIUM_FLAGS}";
-			terminal = false;
-			categories = [ "Network" ];
-			icon = "armcord";
-		};
-		
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
