@@ -32,6 +32,7 @@ in
 	  	gnome.dconf-editor
 	  	gnome.gnome-tweaks
 	  	gnomeExtensions.appindicator
+	  	gnomeExtensions.blur-my-shell
 	  	gnomeExtensions.dock-from-dash
 	  	
 	  	# Theming
@@ -57,8 +58,9 @@ in
 		"org/gnome/shell" = {
 			disable-user-extensions = false;
 			enabled-extensions = [
-				"dock-from-dash@fthx"
 				"appindicatorsupport@rgcjonas.gmail.com"
+				"blur-my-shell@aunetx"
+				"dock-from-dash@fthx"
 			];
 		};
 	};
