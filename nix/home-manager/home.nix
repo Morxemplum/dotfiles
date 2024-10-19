@@ -13,12 +13,14 @@ in
 	# Packages
 	nixpkgs.config.allowUnfree = true;
 	home.packages = with pkgs; [
-	  	armcord
-	  	gimp
-	  	localsend
-	  	mpv
-	  	thunderbird
+		armcord
 	  	vscodium
+	  	
+	  	# Creative
+	  	darktable
+	  	davinci-resolve
+	  	gimp
+	  	obs-studio
 	  	
 	  	# CLI Utilities
 	  	ffmpeg
@@ -37,6 +39,11 @@ in
 	  	
 	  	# Theming
 	  	posy-cursors
+	  	
+	  	# Utilities
+	  	localsend
+	  	mpv
+	  	thunderbird
   	];
 	
 	# GNOME Tweaking
