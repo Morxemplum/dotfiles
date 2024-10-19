@@ -85,8 +85,16 @@ in
     		fi
   	'';
 	
-	# This is mainly for applications that do not come with their own desktop files
+	# This is mainly for applications that do not come with their own desktop files or do not respect NIXOS_OZONE_WL
 	xdg.desktopEntries = {
+		# Discord
+		armcord = {
+			name = "ArmCord";
+			exec = "${pkgs.armcord}/bin/armcord ${settings.WAYLAND_CHROMIUM_FLAGS}";
+			terminal = false;
+			categories = [ "Network" ];
+			icon = "armcord";
+		};
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
