@@ -16,7 +16,7 @@ in
 	# Packages
 	nixpkgs.config.allowUnfree = true;
 	home.packages = with pkgs; [
-		armcord
+		legcord
 	  	vscodium
 	  	
 	  	# Creative
@@ -90,14 +90,6 @@ in
 	
 	# This is mainly for applications that do not come with their own desktop files or do not respect NIXOS_OZONE_WL
 	xdg.desktopEntries = {
-		# Discord
-		armcord = {
-			name = "ArmCord";
-			exec = "${pkgs.armcord}/bin/armcord ${settings.WAYLAND_CHROMIUM_FLAGS}";
-			terminal = false;
-			categories = [ "Network" ];
-			icon = "armcord";
-		};
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
@@ -105,6 +97,14 @@ in
 			terminal = false;
 			categories = [ "AudioVideo" "Audio" "Player" ];
 			icon = "${config.home.homeDirectory}/Apps/icons/cider.png";
+		};
+		# Discord
+		legcord = {
+			name = "Legcord";
+			exec = "${pkgs.legcord}/bin/legcord ${settings.WAYLAND_CHROMIUM_FLAGS}";
+			terminal = false;
+			categories = [ "Network" ];
+			icon = "legcord";
 		};
 	};
 }
