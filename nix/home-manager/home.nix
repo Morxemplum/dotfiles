@@ -2,6 +2,9 @@
 
 let
 	settings = import ./user-settings.nix;
+	unstable = import <nixos-unstable> {
+		config.allowUnfree = true;
+	};
 in
 {
 	# Setup
