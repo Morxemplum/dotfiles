@@ -1,4 +1,3 @@
-./result
-./nix/result
-./scripts/result
+result
 *.key
+
