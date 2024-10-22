@@ -21,7 +21,7 @@ in
 	  	
 	  	# Creative
 	  	darktable
-	  	davinci-resolve
+	 	# davinci-resolve # Commenting out as davinci-resolve currently has problems on Wayland and it doesn't recognize new NVIDIA drivers atm
 	  	gimp
 	  	obs-studio
 	  	
@@ -31,6 +31,9 @@ in
 	  	yt-dlp
 	  	
 	  	# Gaming
+		gamemode
+		prismlauncher
+	 	# Steam is handled in the system config.
 	  	
 	  	# GNOME Stuff
 	  	dconf
@@ -58,6 +61,7 @@ in
 		"org/gnome/mutter" = {
 			dynamic-workspaces = true;
 			edge-tiling = true;
+			# TODO: Add "xwayland-native-scaling" when updated to GNOME 47
 			experimental-features = [ "scale-monitor-framebuffer" ];
 		};
 		"org/gnome/settings-daemon/plugins/power" = {
@@ -93,7 +97,7 @@ in
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
-			exec = "appimage-run ${config.home.homeDirectory}/Apps/Cider.AppImage ${settings.WAYLAND_CHROMIUM_FLAGS}";
+			exec = "appimage-run ${config.home.homeDirectory}/Apps/Cider.AppImage";
 			terminal = false;
 			categories = [ "AudioVideo" "Audio" "Player" ];
 			icon = "${config.home.homeDirectory}/Apps/icons/cider.png";
