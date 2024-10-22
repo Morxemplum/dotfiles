@@ -17,40 +17,40 @@ in
 	nixpkgs.config.allowUnfree = true;
 	home.packages = with pkgs; [
 		legcord
-	  	vscodium
-	  	
-	  	# Creative
-	  	darktable
+	 	vscodium
+	 	
+	 	# Creative
+	 	darktable
 	 	# davinci-resolve # Commenting out as davinci-resolve currently has problems on Wayland and it doesn't recognize new NVIDIA drivers atm
-	  	gimp
-	  	obs-studio
-	  	
-	  	# CLI Utilities
-	  	ffmpeg
-	  	git
-	  	yt-dlp
-	  	
-	  	# Gaming
+	 	gimp
+	 	obs-studio
+	 	
+	 	# CLI Utilities
+	 	ffmpeg
+	 	git
+	 	yt-dlp
+	 	
+	 	# Gaming
 		gamemode
 		prismlauncher
 	 	# Steam is handled in the system config.
-	  	
-	  	# GNOME Stuff
-	  	dconf
-	  	gnome.dconf-editor
-	  	gnome.gnome-tweaks
-	  	gnomeExtensions.appindicator
-	  	gnomeExtensions.blur-my-shell
-	  	gnomeExtensions.dock-from-dash
-	  	
-	  	# Theming
-	  	posy-cursors
-	  	
-	  	# Utilities
-	  	localsend
-	  	mpv
-	  	thunderbird
-  	];
+	 	
+	 	# GNOME Stuff
+	 	dconf
+	 	gnome.dconf-editor
+	 	gnome.gnome-tweaks
+	 	gnomeExtensions.appindicator
+	 	gnomeExtensions.blur-my-shell
+	 	gnomeExtensions.dock-from-dash
+	 	
+	 	# Theming
+	 	posy-cursors
+	 	
+	 	# Utilities
+	 	localsend
+	 	mpv
+	 	thunderbird
+	];
 	
 	# GNOME Tweaking
 	dconf.settings = {
@@ -109,6 +109,19 @@ in
 			terminal = false;
 			categories = [ "Network" ];
 			icon = "legcord";
+		};
+	};
+
+	# App Configurations
+	programs.kitty = lib.mkForce {
+		enable = true;
+		settings = {
+    	background_opacity = "0.8";
+			confirm_os_window_close = 0;
+			dynamic_background_opacity = true;
+			tab_bar_edge = "top";
+			wayland_titlebar_color = "system";
+			window_padding_width = 10;
 		};
 	};
 }
