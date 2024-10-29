@@ -1,0 +1,15 @@
+/*
+  This userChrome hides the default tab bar in the replacement of Tree Style Tabs
+*/
+@charset "UTF-8";
+@-moz-document url(chrome://browser/content/browser.xhtml) {
+  
+  #TabsToolbar {
+    visibility: collapse;
+  }
+  
+  #sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] #sidebar-header {
+    display: none;
+  }
+  
+}
