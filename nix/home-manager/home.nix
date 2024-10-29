@@ -97,18 +97,28 @@ in
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
-			exec = "appimage-run ${config.home.homeDirectory}/Apps/Cider.AppImage";
+			exec = "appimage-run ${settings.STANDALONE_APPS_DIR}/Cider.AppImage";
 			terminal = false;
-			categories = [ "AudioVideo" "Audio" "Player" ];
-			icon = "${config.home.homeDirectory}/Apps/icons/cider.png";
+			categories = [ "AudioVideo" "Audio" "Player" "Network" "Music" ];
+			icon = "${settings.STANDALONE_APPS_ICONS}/cider.png";
 		};
 		# Discord
 		legcord = {
 			name = "Legcord";
 			exec = "${pkgs.legcord}/bin/legcord ${settings.WAYLAND_CHROMIUM_FLAGS}";
 			terminal = false;
-			categories = [ "Network" ];
+			categories = [ "Network" "InstantMessaging" "Chat" ];
 			icon = "legcord";
+		};
+		# Minecraft: Bedrock Edition (mcpelauncher). It also uses AppImage (due to some of the maintainer's practices, it's REALLY hard to build a proper Nixpkg for)
+		# https://github.com/minecraft-linux/mcpelauncher-manifest
+		mcpelauncher-ui = {
+			name = "Minecraft: Bedrock Edition";
+			comment = "Play Minecraft Bedrock Edition through Android runtime";
+			exec = "appimage-run ${settings.STANDALONE_APPS_DIR}/Minecraft_Bedrock_Launcher.AppImage";
+			terminal = false;
+			categories = [ "Game" ];
+			icon = "${settings.STANDALONE_APPS_ICONS}/MC_BE.png";
 		};
 	};
 
