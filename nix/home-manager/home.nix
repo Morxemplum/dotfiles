@@ -16,6 +16,7 @@ in
 	# Packages
 	nixpkgs.config.allowUnfree = true;
 	home.packages = with pkgs; [
+		chromium # Secondary browser
 		legcord
 	 	vscodium
 	 	
