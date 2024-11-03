@@ -16,20 +16,30 @@
 # TODO: Support batch conversion
 # TODO: Add a flag to make "proxy" clips by allowing the user to specify their
 #       resolution, and also use SQ DNxHR instead of HQ.
-# TODO: Add a flag that specifies DV Studio, to skip the H264/H265 check.
 # TODO: Use the MKV container instead if the video codec is AV1.
 # TODO: Add a flag to use a more lossless audio codec (WAV pcm)
 # Note: I would use libopus and flac, but ffmpeg doesn't support containerizing
 #       them in mov. And DNxHR will not work in an MKV container.
 
-SHORT_ARGS="h"
-LONG_ARGS=help
+SHORT_ARGS="ho"
+LONG_ARGS=help,output,studio
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
+
+# Program variables
+STUDIO=0
+OUTPUT_DEST=""
 
 function list_help_info() {
   echo "Usage: davincivideo.sh [options] input_video"
   echo "    Options:"
-  echo "    -h | --help            Lists the usage and flags that can be used"
+  echo "    -h | --help            Lists the usage and flags that can be used."
+  echo "    -o | --output          Allows the user to specify a custom directory to output"
+  echo "                           transcoded media. By default, transcoded media will output to"
+  echo "                           the same folder as their original counterpart"
+  echo "    --studio               Asserts that the user is using DaVinci Resolve Studio, skipping"
+  echo "                           transcoding for any videos using h264/h265."
+  echo "                           (WARNING: Only use this if you are limited on time/disk space."
+  echo "                           DaVinci Resolve has a harder time processing these codecs.)"
   echo "Requires ffprobe and ffmpeg for usage."
 }
 
@@ -37,6 +47,14 @@ while true; do
   case "$1" in
     -h|--help) list_help_info
       exit 0
+      ;;
+    -o|--output)
+      OUTPUT_DEST=$2
+      shift 2
+      ;;
+    --studio)
+      STUDIO=1
+      shift
       ;;
     --)
       shift
@@ -55,14 +73,31 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Strip the file extension
-destination="${1%.*}"
+DESTINATION="${1%.*}"
 # Strip the path to get the name
-input_file=${destination##*/}
+input_file=${DESTINATION##*/}
+
+# Check if an output destination was specified, and if it exists.
+if [ "$OUTPUT_DEST" != "" ]; then
+  OUTPUT_DEST=${OUTPUT_DEST%/}
+  echo "Output Directory: $OUTPUT_DEST"
+  if [ ! -d "$OUTPUT_DEST" ]; then
+	  echo "    Output directory does not exist. Creating."
+	  mkdir "$OUTPUT_DEST"
+	  if [ ! -d "$OUTPUT_DEST" ]; then
+		  echo "    Failed to make output directory. Insufficient permissions?"
+		  exit 1
+	  fi
+  fi
+  DESTINATION="$OUTPUT_DEST/$input_file"
+fi
+
 # Get the output file name (same as input but with .mov extension)
-output_file="$destination-T.mov"
+output_file="$DESTINATION-T.mov"
 echo $1
 
 vtranscode_str="-c:v copy"
+video_transcode=0
 
 # Use ffprobe and grab the video's codec
 ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams v:0 -show_entries stream=codec_name -sexagesimal -o metadata.tmp.txt
@@ -76,6 +111,18 @@ video_codec=${video_codec:11}
 # video_rfps=$(grep "r_frame_rate=" metadata.tmp.txt)
 # video_rfps=${video_rfps:13}
 # video_fps=$(awk "BEGIN { print $video_rfps }")
+
+# Is the video using a codec DV4L doesn't support?
+if [[ ($video_codec == "h264" || $video_codec == "h265") && $STUDIO == "0" ]]; then
+  video_transcode=1
+  echo "    Video needs transcoding"
+else
+  echo "    Video is already in an acceptable codec"
+fi
+
+if (( video_transcode == 1 )); then
+  vtranscode_str="-c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p"
+fi
 
 # Grab audio metadata
 ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams a -show_entries stream=codec_name -sexagesimal -o metadata.tmp.txt
@@ -112,20 +159,6 @@ done
 
 # echo "CODEC: $video_codec, RESOLUTION: $video_width x $video_height @ $video_fps"
 # echo "CODEC: $audio_codec"
-
-video_transcode=0
-
-# Is the video using a codec DV4L doesn't support?
-if [[ $video_codec == "h264" || $video_codec == "h265" ]]; then
-  video_transcode=1
-  echo "    Transcoding Video"
-else
-  echo "    Video is already in an acceptable codec. Skipping"
-fi
-
-if (( video_transcode == 1 )); then
-  vtranscode_str="-c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p"
-fi
 
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
 ffmpeg -hide_banner -loglevel warning -stats -i "$1" $input_str $vtranscode_str $map_str -f mov "$output_file"
