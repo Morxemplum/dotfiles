@@ -20,11 +20,12 @@
 #       them in mov. And DNxHR will not work in an MKV container.
 
 SHORT_ARGS="hop"
-LONG_ARGS=help,output,proxy,studio,raw-audio
+LONG_ARGS=help,output,overwrite,proxy,studio,raw-audio
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 # Program variables
 OUTPUT_DEST=""
+OVERWRITE=0 # 0 False; 1 True; 2 Ask
 PROXY=0
 PROXY_SCALE=100
 RAW_AUDIO=0
@@ -32,7 +33,8 @@ STUDIO=0
 
 function list_help_info() {
   echo "Usage: davincivideo.sh [options] input_video"
-  echo "    Options:"
+  echo ""
+  echo "Options:"
   echo "    -h | --help            Lists the usage and flags that can be used."
   echo "    -o | --output    [dir] Allows the user to specify a custom directory to output"
   echo "                           transcoded media. By default, transcoded media will output to"
@@ -41,6 +43,9 @@ function list_help_info() {
   echo "                           original, and downgrades to DNxHR_SQ. Useful for generating"
   echo "                           proxy media that is easier to process and has smaller file size."
   echo "                           Scale is represented as a percentage, acceptable values 10 - 100" 
+  echo "    --overwrite  [yes|ask] Allows media to be retranscoded and overwrite previous copies."
+  echo "                           yes will overwrite media automatically, ask will ask the user"
+  echo "                           to overwrite for each existing transcode found."
   echo "    --raw-audio            Instead of transcoding audio to mp3, raw PCM will be used."
   echo "                           Use if you want no/minimal loss in audio quality, but will"
   echo "                           increase file size. (pcm_s16le)"
@@ -48,6 +53,7 @@ function list_help_info() {
   echo "                           transcoding for any videos using h264/h265."
   echo "                           (WARNING: Only use this if you are limited on time/disk space."
   echo "                           DaVinci Resolve has a harder time processing these codecs.)"
+  echo ""
   echo "Requires ffprobe and ffmpeg for usage."
 }
 
@@ -63,6 +69,18 @@ while true; do
     -p|--proxy)
       PROXY=1
       PROXY_SCALE=$2
+      shift 2
+      ;;
+    --overwrite)
+      lower=$(awk "BEGIN { print tolower(\"$2\") }")
+      if [[ $lower == "y" || $lower == "yes" ]]; then
+        OVERWRITE=1
+      elif [[ $lower == "a" || $lower == "ask" ]]; then
+        OVERWRITE=2
+      else
+        echo "ERROR: Invalid/missing input for overwrite flag"
+        exit 1
+      fi
       shift 2
       ;;
     --raw-audio)
@@ -133,10 +151,24 @@ fi
 output_file="${output_file}.mov"
 echo $1
 
+# Check if the transcoded video already exists
+overwrite_str=""
+if [ -f $output_file ]; then
+  if (( OVERWRITE == 0 )); then
+    echo "    Transcoded output already exists. Skipping."
+    # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
+    exit 0
+  elif (( OVERWRITE == 1 )); then
+    echo "    Transcoded output already exists. Overwriting."
+    overwrite_str="-y"
+  fi
+  # As for 2, we don't need to do anything as ffmpeg will handle the prompt for us
+fi
+
 vtranscode_str="-c:v copy"
 video_transcode=0
 
-# Use ffprobe and grab the video's codec
+# Use ffprobe and grab the necessary metadata
 ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams v:0 -show_entries stream=$video_metadata -sexagesimal -o metadata.tmp.txt
 
 video_codec=$(grep "codec_name" metadata.tmp.txt)
@@ -214,7 +246,7 @@ for line in "${audio_codecs[@]}"; do
 done
 
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str -f mov "$output_file"
+ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str -f mov "$output_file"
 
 echo "Conversion completed. Output file: $output_file"
 echo "Cleaning temp files"
