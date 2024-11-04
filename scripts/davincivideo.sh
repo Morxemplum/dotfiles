@@ -22,20 +22,24 @@
 #       them in mov. And DNxHR will not work in an MKV container.
 
 SHORT_ARGS="ho"
-LONG_ARGS=help,output,studio
+LONG_ARGS=help,output,studio,raw-audio
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 # Program variables
 STUDIO=0
+RAW_AUDIO=0
 OUTPUT_DEST=""
 
 function list_help_info() {
   echo "Usage: davincivideo.sh [options] input_video"
   echo "    Options:"
   echo "    -h | --help            Lists the usage and flags that can be used."
-  echo "    -o | --output          Allows the user to specify a custom directory to output"
+  echo "    -o | --output    [dir] Allows the user to specify a custom directory to output"
   echo "                           transcoded media. By default, transcoded media will output to"
   echo "                           the same folder as their original counterpart"
+  echo "    --raw-audio            Instead of transcoding audio to mp3, raw PCM will be used."
+  echo "                           Use if you want no/minimal loss in audio quality, but will"
+  echo "                           increase file size. (pcm_s16le)"
   echo "    --studio               Asserts that the user is using DaVinci Resolve Studio, skipping"
   echo "                           transcoding for any videos using h264/h265."
   echo "                           (WARNING: Only use this if you are limited on time/disk space."
@@ -51,6 +55,10 @@ while true; do
     -o|--output)
       OUTPUT_DEST=$2
       shift 2
+      ;;
+    --raw-audio)
+      RAW_AUDIO=1
+      shift
       ;;
     --studio)
       STUDIO=1
@@ -132,7 +140,7 @@ audio_codecs=(`grep "codec_name" metadata.tmp.txt`)
 i=0
 tc=0 # boolean for tracking if current audio track was transcoded
 tcr=0 # Boolean to check if ANY audio track was transcoded
-input_str=""
+input_str="-i $1"
 map_str="-map 0:v"
 
 # Due to ffmpeg limitations, we must split each transcoded audio track into their own file and merge them back
@@ -142,8 +150,13 @@ for line in "${audio_codecs[@]}"; do
   # FFmpeg doesn't support Opus in mov.
   if [[ $acodec == "aac" || $acodec == "opus" ]]; then
     echo "    Transcoding Audio Track #$i"
-    ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a libmp3lame "a$i.tmp.mp3"
-    input_str="${input_str} -i a$i.tmp.mp3"
+    if (( RAW_AUDIO == 1 )); then
+      ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a pcm_s16le "a$i.tmp.wav"
+      input_str="${input_str} -i a$i.tmp.wav"
+    else
+      ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a libmp3lame "a$i.tmp.mp3"
+      input_str="${input_str} -i a$i.tmp.mp3"
+    fi
     tc=1
     tcr=1
   else
@@ -161,12 +174,16 @@ done
 # echo "CODEC: $audio_codec"
 
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg -hide_banner -loglevel warning -stats -i "$1" $input_str $vtranscode_str $map_str -f mov "$output_file"
+ffmpeg -hide_banner -loglevel warning -stats $input_str $vtranscode_str $map_str -c:a copy -f mov "$output_file"
 
 echo "Conversion completed. Output file: $output_file"
 echo "Cleaning temp files"
 # Clean up temp files
 rm metadata.tmp.txt
 if (( tcr == 1 )); then
-  rm a*.tmp.mp3
+  if (( RAW_AUDIO == 1 )); then
+    rm a*.tmp.wav
+  else
+    rm a*.tmp.mp3
+  fi
 fi
