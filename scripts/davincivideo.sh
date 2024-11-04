@@ -7,28 +7,28 @@
 #              unsupported codecs and transcodes them into production ready 
 #              codecs that Davinci Resolve for Linux can read and edit.
 #
-#              This script heavily modifies the original in multiple ways: 
-#              uses the more modern and flexible Avid DNxHR codec, preserves
-#              audio and video resolution of the original video,
-#              transcodes audio tracks to MP3 (libmp3lame) by default, and
-#              selectively encodes all audio tracks in a video file
+#              This script completely transforms the original in multiple ways: 
+#              - Uses the more modern and flexible Avid DNxHR codec
+#              - Preserves audio and video resolution of the original video
+#              - Has a quickhand method of generating proxy media
+#              - Transcodes audio tracks to MP3 (libmp3lame) by default
+#              - Selectively encodes all audio tracks in a video file
 #
 # TODO: Support batch conversion
-# TODO: Add a flag to make "proxy" clips by allowing the user to specify their
-#       resolution, and also use SQ DNxHR instead of HQ.
 # TODO: Use the MKV container instead if the video codec is AV1.
-# TODO: Add a flag to use a more lossless audio codec (WAV pcm)
 # Note: I would use libopus and flac, but ffmpeg doesn't support containerizing
 #       them in mov. And DNxHR will not work in an MKV container.
 
-SHORT_ARGS="ho"
-LONG_ARGS=help,output,studio,raw-audio
+SHORT_ARGS="hop"
+LONG_ARGS=help,output,proxy,studio,raw-audio
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 # Program variables
-STUDIO=0
-RAW_AUDIO=0
 OUTPUT_DEST=""
+PROXY=0
+PROXY_SCALE=100
+RAW_AUDIO=0
+STUDIO=0
 
 function list_help_info() {
   echo "Usage: davincivideo.sh [options] input_video"
@@ -37,6 +37,10 @@ function list_help_info() {
   echo "    -o | --output    [dir] Allows the user to specify a custom directory to output"
   echo "                           transcoded media. By default, transcoded media will output to"
   echo "                           the same folder as their original counterpart"
+  echo "    -p | --proxy   [scale] Allows video to be transcoded to a resolution smaller than the"
+  echo "                           original, and downgrades to DNxHR_SQ. Useful for generating"
+  echo "                           proxy media that is easier to process and has smaller file size."
+  echo "                           Scale is represented as a percentage, acceptable values 10 - 100" 
   echo "    --raw-audio            Instead of transcoding audio to mp3, raw PCM will be used."
   echo "                           Use if you want no/minimal loss in audio quality, but will"
   echo "                           increase file size. (pcm_s16le)"
@@ -54,6 +58,11 @@ while true; do
       ;;
     -o|--output)
       OUTPUT_DEST=$2
+      shift 2
+      ;;
+    -p|--proxy)
+      PROXY=1
+      PROXY_SCALE=$2
       shift 2
       ;;
     --raw-audio)
@@ -100,25 +109,50 @@ if [ "$OUTPUT_DEST" != "" ]; then
   DESTINATION="$OUTPUT_DEST/$input_file"
 fi
 
-# Get the output file name (same as input but with .mov extension)
-output_file="$DESTINATION-T.mov"
+# Get the output file name (File extension will be added later)
+output_file="$DESTINATION-T"
+
+video_metadata="codec_name"
+if (( PROXY == 1 )); then
+  # Sanity checks on the Proxy Scale
+  if !(( PROXY_SCALE )); then
+    echo "ERROR: Proxy scale ($PROXY_SCALE) is not a number!"
+    exit 1
+  fi
+  if (( PROXY_SCALE < 10 || PROXY_SCALE > 100 )); then
+    echo "ERROR: Proxy scale is outside of acceptable range (10 - 100)"
+    exit 1
+  elif (( PROXY_SCALE != 100 )); then
+    video_metadata="${video_metadata},width,height"
+  fi
+  # Get the actual decimal point
+  PROXY_SCALE=$(awk "BEGIN { print $PROXY_SCALE/100 }")
+  output_file="${output_file}P"
+fi
+
+output_file="${output_file}.mov"
 echo $1
 
 vtranscode_str="-c:v copy"
 video_transcode=0
 
 # Use ffprobe and grab the video's codec
-ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams v:0 -show_entries stream=codec_name -sexagesimal -o metadata.tmp.txt
+ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams v:0 -show_entries stream=$video_metadata -sexagesimal -o metadata.tmp.txt
 
 video_codec=$(grep "codec_name" metadata.tmp.txt)
 video_codec=${video_codec:11}
-# video_width=$(grep "width=" metadata.tmp.txt)
-# video_width=${video_width:6}
-# video_height=$(grep "height=" metadata.tmp.txt)
-# video_height=${video_height:7}
-# video_rfps=$(grep "r_frame_rate=" metadata.tmp.txt)
-# video_rfps=${video_rfps:13}
-# video_fps=$(awk "BEGIN { print $video_rfps }")
+
+if [[ $PROXY == "1" && $PROXY_SCALE != "1" ]]; then
+  video_width=$(grep "width=" metadata.tmp.txt)
+  video_width=${video_width:6}
+  video_height=$(grep "height=" metadata.tmp.txt)
+  video_height=${video_height:7}
+
+  proxy_width=$(awk "BEGIN { print int($video_width * $PROXY_SCALE) }")
+  proxy_height=$(awk "BEGIN { print int($video_height * $PROXY_SCALE) }")
+
+  # echo "CODEC: $video_codec, RESOLUTION: $video_width x $video_height, PROXY RESOLUTION: $proxy_width x $proxy_height"
+fi
 
 # Is the video using a codec DV4L doesn't support?
 if [[ ($video_codec == "h264" || $video_codec == "h265") && $STUDIO == "0" ]]; then
@@ -128,8 +162,17 @@ else
   echo "    Video is already in an acceptable codec"
 fi
 
+# TODO: Apply proxy scaling to videos that don't meet the criteria? Though this would involve having to learn various quirks of codecs.
 if (( video_transcode == 1 )); then
-  vtranscode_str="-c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p"
+  QUALITY_PRESET="dnxhr_hq"
+  if (( PROXY == 1 )); then
+    QUALITY_PRESET="dnxhr_sq"
+  fi
+  vtranscode_str="-c:v dnxhd -profile:v $QUALITY_PRESET -pix_fmt yuv422p"
+  if [[ $PROXY == "1" && $PROXY_SCALE != "1" ]]; then
+    echo "    Proxy Resolution: ${proxy_width}x${proxy_height}"
+    vtranscode_str="${vtranscode_str} -s ${proxy_width}x${proxy_height}"
+  fi
 fi
 
 # Grab audio metadata
@@ -170,11 +213,8 @@ for line in "${audio_codecs[@]}"; do
   fi
 done
 
-# echo "CODEC: $video_codec, RESOLUTION: $video_width x $video_height @ $video_fps"
-# echo "CODEC: $audio_codec"
-
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg -hide_banner -loglevel warning -stats $input_str $vtranscode_str $map_str -c:a copy -f mov "$output_file"
+ffmpeg -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str -f mov "$output_file"
 
 echo "Conversion completed. Output file: $output_file"
 echo "Cleaning temp files"
