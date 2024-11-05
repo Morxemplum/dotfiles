@@ -233,9 +233,9 @@ map_str="-map 0:v"
 # Due to ffmpeg limitations, we must split each transcoded audio track into their own file and merge them back
 for line in "${audio_codecs[@]}"; do
   acodec="${line:11}"
-  # DV4L doesn't support AAC, regardless of Free or Studio.
+  # DV4L doesn't support AAC or Ogg Vorbis, regardless of Free or Studio.
   # FFmpeg doesn't support Opus in mov.
-  if [[ $acodec == "aac" || $acodec == "opus" ]]; then
+  if [[ ($acodec == "aac" || $acodec == "vorbis") || ($acodec == "opus" && $file_container == "mov") ]]; then
     echo "    Transcoding Audio Track #$i"
     if (( RAW_AUDIO == 1 )); then
       ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a pcm_s16le "a$i.tmp.wav"
