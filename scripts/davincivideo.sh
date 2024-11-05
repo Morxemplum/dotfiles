@@ -15,7 +15,6 @@
 #              - Selectively encodes all audio tracks in a video file
 #
 # TODO: Support batch conversion
-# TODO: Use the MKV container instead if the video codec is AV1.
 # Note: I would use libopus and flac, but ffmpeg doesn't support containerizing
 #       them in mov. And DNxHR will not work in an MKV container.
 
@@ -111,6 +110,7 @@ fi
 DESTINATION="${1%.*}"
 # Strip the path to get the name
 input_file=${DESTINATION##*/}
+file_container="mov"
 
 # Check if an output destination was specified, and if it exists.
 if [ "$OUTPUT_DEST" != "" ]; then
@@ -148,25 +148,11 @@ if (( PROXY == 1 )); then
   output_file="${output_file}P"
 fi
 
-output_file="${output_file}.mov"
 echo $1
-
-# Check if the transcoded video already exists
-overwrite_str=""
-if [ -f $output_file ]; then
-  if (( OVERWRITE == 0 )); then
-    echo "    Transcoded output already exists. Skipping."
-    # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
-    exit 0
-  elif (( OVERWRITE == 1 )); then
-    echo "    Transcoded output already exists. Overwriting."
-    overwrite_str="-y"
-  fi
-  # As for 2, we don't need to do anything as ffmpeg will handle the prompt for us
-fi
 
 vtranscode_str="-c:v copy"
 video_transcode=0
+switch_container=0
 
 # Use ffprobe and grab the necessary metadata
 ffprobe -hide_banner -loglevel warning -i "$1" -print_format ini -show_format -select_streams v:0 -show_entries stream=$video_metadata -sexagesimal -o metadata.tmp.txt
@@ -190,6 +176,11 @@ fi
 if [[ ($video_codec == "h264" || $video_codec == "h265") && $STUDIO == "0" ]]; then
   video_transcode=1
   echo "    Video needs transcoding"
+# Free codecs (like VP9 and AV1) are not compatible with MOV, so if we must preserve that codec, then we need to switch the container
+elif [[ $video_codec == "vp9" || $video_codec == "av1" ]]; then
+  echo "    \"Free\" codec detected ($video_codec). Switching QuickTime to Matroska"
+  # TODO: When adding a force transcode flag, recommend people to use this flag due to how demanding these codecs are
+  switch_container=1
 else
   echo "    Video is already in an acceptable codec"
 fi
@@ -205,6 +196,27 @@ if (( video_transcode == 1 )); then
     echo "    Proxy Resolution: ${proxy_width}x${proxy_height}"
     vtranscode_str="${vtranscode_str} -s ${proxy_width}x${proxy_height}"
   fi
+fi
+
+if (( switch_container == 1 )); then
+  file_container="mkv"
+fi
+
+output_file="${output_file}.$file_container"
+
+# Check if the transcoded video already exists
+overwrite_str=""
+if [ -f $output_file ]; then
+  if (( OVERWRITE == 0 )); then
+    echo "    Transcoded output already exists. Skipping."
+    # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
+    rm metadata.tmp.txt
+    exit 0
+  elif (( OVERWRITE == 1 )); then
+    echo "    Transcoded output already exists. Overwriting."
+    overwrite_str="-y"
+  fi
+  # As for 2, we don't need to do anything as ffmpeg will handle the prompt for us
 fi
 
 # Grab audio metadata
@@ -246,7 +258,7 @@ for line in "${audio_codecs[@]}"; do
 done
 
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str -f mov "$output_file"
+ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str "$output_file"
 
 echo "Conversion completed. Output file: $output_file"
 echo "Cleaning temp files"
