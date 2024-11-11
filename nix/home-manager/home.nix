@@ -18,7 +18,6 @@ in
 	home.packages = with pkgs; [
 		chromium # Secondary browser
 		legcord
-	 	vscodium
 	 	
 	 	# Creative
 	 	darktable
@@ -127,7 +126,7 @@ in
 	programs.kitty = lib.mkForce {
 		enable = true;
 		settings = {
-    	background_opacity = "0.8";
+    			background_opacity = "0.8";
 			confirm_os_window_close = 0;
 			dynamic_background_opacity = true;
 			tab_bar_edge = "top";
@@ -135,4 +134,12 @@ in
 			window_padding_width = 10;
 		};
 	};
+	
+	programs.vscode = {
+		enable = true;
+		package = pkgs.vscodium;
+		extensions = with pkgs.vscode-extensions; [
+			jnoortheen.nix-ide
+		];
+	};	
 }
