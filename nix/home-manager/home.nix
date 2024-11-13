@@ -123,7 +123,9 @@ in
 	};
 
 	# App Configurations
-	programs.kitty = lib.mkForce {
+	programs = {
+		# TODO: Add Floorp configuration (it's only in home-manager unstable, currently)
+		kitty = lib.mkForce {
 		enable = true;
 		settings = {
     			background_opacity = "0.8";
@@ -133,13 +135,14 @@ in
 			wayland_titlebar_color = "system";
 			window_padding_width = 10;
 		};
-	};
-	
-	programs.vscode = {
+		};
+
+		vscode = {
 		enable = true;
 		package = pkgs.vscodium;
 		extensions = with pkgs.vscode-extensions; [
 			jnoortheen.nix-ide
 		];
+		};
 	};	
 }
