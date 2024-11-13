@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  home.pkgs = with pkgs; [
+  home.packages = with pkgs; [
 	 	dconf
 	 	gnome.dconf-editor
 	 	gnome.gnome-tweaks

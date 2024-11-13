@@ -7,6 +7,12 @@ let
 	};
 in
 {
+	# Import settings
+	imports = [
+		./gnome-settings.nix
+		./hyprland-settings.nix
+	];
+
 	# Setup
 	programs.home-manager.enable = true;
 	home.username = settings.USER_NAME;
