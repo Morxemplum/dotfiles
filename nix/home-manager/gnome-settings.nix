@@ -13,8 +13,10 @@
   # GNOME Tweaking
 	dconf.settings = {
 		"org/gnome/desktop/interface" = {
+			color-scheme = "prefer-dark";
 			cursor-size = 32;
 			cursor-theme = "Posy_Cursor_Black_125_175";
+			icon-theme = "Adwaita";
 		};
 		"org/gnome/mutter" = {
 			dynamic-workspaces = true;
