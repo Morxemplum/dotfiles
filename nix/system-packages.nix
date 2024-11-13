@@ -16,8 +16,13 @@
 		kitty # Terminal Emulator
 		vim 
 		
-		# System commands
+		# Useful libs and tools
+		htop 
+		imagemagick 
+		inotify-tools
+		killall 
 		lshw
+		pstree
 		
 		# Compatibility tools
 		appimage-run
