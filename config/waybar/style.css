@@ -39,7 +39,7 @@ window#waybar.hidden {
     background: #878787;
     color: #000;
     margin: 10px 5px;
-    padding: 0px 4px;
+    padding: 0px 0px;
     border-radius: 10px;
     font-size: 10px;
     transition-duration: .15s;

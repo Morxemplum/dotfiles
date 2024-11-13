@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Add any waybar files so they can be watched
 CONFIG_FILES="$HOME/dotfiles/config/waybar/config $HOME/dotfiles/config/waybar/style.css"

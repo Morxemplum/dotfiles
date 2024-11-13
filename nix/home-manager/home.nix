@@ -42,11 +42,13 @@ in
 	 	# Steam is handled in the system config.
 	 	
 	 	# Theming
+		font-awesome
 	 	posy-cursors
 	 	
 	 	# Utilities
 	 	localsend
 	 	mpv
+		pwvucontrol
 	 	thunderbird
 
 		# VR
