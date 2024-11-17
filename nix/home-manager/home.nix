@@ -29,6 +29,7 @@ in
 	 	darktable
 	 	# davinci-resolve # Commenting out as davinci-resolve currently has problems on Wayland and it doesn't recognize new NVIDIA drivers atm
 	 	gimp
+		inkscape
 	 	obs-studio
 	 	
 	 	# CLI Utilities
@@ -82,6 +83,15 @@ in
 			terminal = false;
 			categories = [ "Game" ];
 			icon = "${settings.STANDALONE_APPS_ICONS}/MC_BE.png";
+		};
+		# WlxOverlay-S: A VR overlay to let you view your desktop on Linux. It is distributed as an AppImage by default.
+		# https://github.com/galister/wlx-overlay-s
+		wlxoverlay-s = {
+			name = "WlxOverlay-S";
+			comment = "A custom XSOverlay inspired desktop viewer for VR";
+			exec = "appimage-run ${settings.STANDALONE_APPS_DIR}/WlxOverlay-S.AppImage";
+			terminal = true;
+			categories = [ "Utility" "Accessibility" ];
 		};
 	};
 
