@@ -24,11 +24,11 @@
 			# TODO: Add "xwayland-native-scaling" when updated to GNOME 47
 			experimental-features = [ "scale-monitor-framebuffer" ];
 		};
-		"org/gnome/settings-daemon/plugins/power" = {
-			# NVIDIA + Wayland has issues when recovering from sleep, so it has to be turned off
-			# Hopefully this will be fixed
-			sleep-inactive-ac-type = "nothing";
-		};
+		# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
+		# In the case that this issue regresses and comes back, uncomment this.
+		# "org/gnome/settings-daemon/plugins/power" = {
+			# sleep-inactive-ac-type = "nothing";
+		# };
 		"org/gnome/shell" = {
 			disable-user-extensions = false;
 			enabled-extensions = [

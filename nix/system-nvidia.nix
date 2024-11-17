@@ -10,6 +10,8 @@ let
   };
 in
 {
+  boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
 	hardware.opengl = {
 		enable = true;
@@ -24,7 +26,8 @@ in
   	open = true; 
   	modesetting.enable = true;
 
-    # Power Management does not work on my system, and I don't have hybrid graphics.
-    # powerManagement.enable = true;
+    # nvidia.NVreg_PreserveVideoMemoryAllocations is required for this to work properly.
+    # FIXME: There is a slight bug where the screen will black for a second moments after resuming from suspend.
+    powerManagement.enable = true;
   };
 }
