@@ -4,11 +4,6 @@
 # of my operations, and only have to use the proprietary drivers for programs
 # that rely on CUDA acceleration (e.g. Davinci Resolve)
 
-let
-  unstable-pkgs = import <nixos-unstable> {
-    config.allowUnfree = true;
-  };
-in
 {
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
 
@@ -18,9 +13,7 @@ in
 		enable32Bit = true;
 	};
 	hardware.nvidia = {
-		# The unstable Nvidia drivers have plenty of improvements stable doesn't have (e.g Explicit Sync)
-    # This will be reverted when upgrading to 24.11
-  	package = unstable-pkgs.linuxPackages.nvidiaPackages.latest;
+  	package = config.boot.kernelPackages.nvidiaPackages.stable;
     # NVIDIA now recommends newer cards use the open drivers
     # https://developer.nvidia.com/blog/nvidia-transitions-fully-towards-open-source-gpu-kernel-modules/
   	open = true; 
