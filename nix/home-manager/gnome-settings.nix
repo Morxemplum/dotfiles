@@ -3,8 +3,8 @@
 {
   home.packages = with pkgs; [
 	 	dconf
-	 	gnome.dconf-editor
-	 	gnome.gnome-tweaks
+	 	dconf-editor
+	 	gnome-tweaks
 	 	gnomeExtensions.appindicator
 	 	gnomeExtensions.blur-my-shell
 	 	gnomeExtensions.dock-from-dash
