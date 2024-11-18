@@ -17,7 +17,7 @@ in
 	programs.home-manager.enable = true;
 	home.username = settings.USER_NAME;
 	home.homeDirectory = settings.HOME_DIR;
-	home.stateVersion = "24.05";
+	home.stateVersion = "24.11";
 	
 	# Packages
 	nixpkgs.config.allowUnfree = true;
