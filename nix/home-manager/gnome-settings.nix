@@ -21,8 +21,7 @@
 		"org/gnome/mutter" = {
 			dynamic-workspaces = true;
 			edge-tiling = true;
-			# TODO: Add "xwayland-native-scaling" when updated to GNOME 47
-			experimental-features = [ "scale-monitor-framebuffer" ];
+			experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
 		};
 		# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
 		# In the case that this issue regresses and comes back, uncomment this.
