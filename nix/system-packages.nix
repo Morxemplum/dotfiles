@@ -23,6 +23,7 @@
 		killall 
 		lshw
 		pstree
+		python3Full # This is solely for the purpose of running scripts.
 		
 		# Compatibility tools
 		appimage-run

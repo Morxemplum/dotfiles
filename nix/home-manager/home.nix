@@ -35,6 +35,7 @@ in
 	 	# CLI Utilities
 	 	ffmpeg
 	 	git
+		win2xcur
 	 	yt-dlp
 	 	
 	 	# Gaming
