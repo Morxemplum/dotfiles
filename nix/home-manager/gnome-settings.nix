@@ -3,8 +3,8 @@
 {
   home.packages = with pkgs; [
 	 	dconf
-	 	gnome.dconf-editor
-	 	gnome.gnome-tweaks
+	 	dconf-editor
+	 	gnome-tweaks
 	 	gnomeExtensions.appindicator
 	 	gnomeExtensions.blur-my-shell
 	 	gnomeExtensions.dock-from-dash
@@ -21,14 +21,14 @@
 		"org/gnome/mutter" = {
 			dynamic-workspaces = true;
 			edge-tiling = true;
-			# TODO: Add "xwayland-native-scaling" when updated to GNOME 47
-			experimental-features = [ "scale-monitor-framebuffer" ];
+			experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
 		};
-		# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
-		# In the case that this issue regresses and comes back, uncomment this.
-		# "org/gnome/settings-daemon/plugins/power" = {
+		"org/gnome/settings-daemon/plugins/power" = {
+			# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
+			# In the case that this issue regresses and comes back, uncomment this.
 			# sleep-inactive-ac-type = "nothing";
-		# };
+			sleep-inactive-ac-timeout = 1800;
+		};
 		"org/gnome/shell" = {
 			disable-user-extensions = false;
 			enabled-extensions = [
