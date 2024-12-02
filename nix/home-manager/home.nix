@@ -52,6 +52,7 @@ in
 	 	mpv
 		pwvucontrol
 	 	thunderbird
+		xorg.xeyes
 
 		# VR
 		sidequest
