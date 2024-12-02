@@ -23,11 +23,12 @@
 			edge-tiling = true;
 			experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
 		};
-		# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
-		# In the case that this issue regresses and comes back, uncomment this.
-		# "org/gnome/settings-daemon/plugins/power" = {
+		"org/gnome/settings-daemon/plugins/power" = {
+			# A workaround for resuming from suspend properly has been found in system-nvidia regarding power management
+			# In the case that this issue regresses and comes back, uncomment this.
 			# sleep-inactive-ac-type = "nothing";
-		# };
+			sleep-inactive-ac-timeout = 1800;
+		};
 		"org/gnome/shell" = {
 			disable-user-extensions = false;
 			enabled-extensions = [

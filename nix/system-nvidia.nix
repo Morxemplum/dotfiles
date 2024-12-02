@@ -20,7 +20,7 @@
   	modesetting.enable = true;
 
     # nvidia.NVreg_PreserveVideoMemoryAllocations is required for this to work properly.
-    # FIXME: There is a slight bug where the screen will black for a second moments after resuming from suspend.
+    # FIXME: Sometimes, the system will re-suspend (and will often brick the session) shortly after resuming. This doesn't happen too often, but it is annoying when it happens.
     powerManagement.enable = true;
   };
 }
