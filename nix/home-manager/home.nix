@@ -89,7 +89,67 @@ in
 
 	# App Configurations
 	programs = {
-		# TODO: Add Floorp configuration (it's only in home-manager unstable, currently)
+		floorp = {
+			enable = true;
+			policies = {
+				DisableTelemetry = true;
+				DisableFirefoxStudies = true;
+				DontCheckDefaultBrowser = true;
+				SearchBar = "unified";
+
+				Preferences = {
+					"browser.topsites.contile.enabled" = "lock-false";
+        	"browser.newtabpage.activity-stream.showSponsored" = "lock-false";
+        	"browser.newtabpage.activity-stream.system.showSponsored" = "lock-false";
+        	"browser.newtabpage.activity-stream.showSponsoredTopSites" = "lock-false";
+				};
+
+				ExtensionSettings = {
+					# uBlock Origin
+          "uBlock0@raymondhill.net" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+            installation_mode = "force_installed";
+          };
+					# Privacy Badger
+          "jid1-MnnxcxisBPnSXQ@jetpack" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
+            installation_mode = "force_installed";
+          };
+					# Tree Style Tab
+					"treestyletab@piro.sakura.ne.jp" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
+						installation_mode = "force_installed";
+					};
+					# Trace - Online Tracking Protection 
+					"{6ff498ff-a3b6-4891-a614-12a825d4efcf}" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/absolutedouble-trace/latest.xpi";
+						installation_mode = "force_installed";
+					};
+					# Bitwarden
+					"{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+						installation_mode = "force_installed";
+					};
+					### YOUTUBE SPECIFIC EXTENSIONS
+					# Return YouTube Dislike
+					"{762f9885-5a13-4abd-9c77-433dcd38b8fd}" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/return-youtube-dislikes/latest.xpi";
+						installation_mode = "force_installed";
+					};
+					# SponsorBlock For YouTube
+					"sponsorBlocker@ajay.app" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi";
+						installation_mode = "force_installed";
+					};
+					# Unhook: Remove YouTube Recommended Videos Comments
+					"myallychou@gmail.com" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/youtube-recommended-videos/latest.xpi";
+						installation_mode = "force_installed";
+					};
+				};
+			};
+		};
+
 		kitty = lib.mkForce {
 			enable = true;
 			settings = {
