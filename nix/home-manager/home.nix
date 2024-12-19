@@ -107,6 +107,9 @@ in
 			package = pkgs.vscodium;
 			extensions = with pkgs.vscode-extensions; [
 				jnoortheen.nix-ide
+				jeff-hykin.better-nix-syntax
+				ms-vscode.cpptools
+				twxs.cmake
 			];
 		};
 	};
