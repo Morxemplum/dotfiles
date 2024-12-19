@@ -16,7 +16,11 @@
 		kitty # Terminal Emulator
 		vim 
 		
+		# Nix tools
+		nix-prefetch-github
+		
 		# Useful libs and tools
+		gdb
 		htop 
 		imagemagick 
 		inotify-tools
@@ -28,6 +32,9 @@
 		# Compatibility tools
 		appimage-run
 		distrobox
+
+		(qt6Packages.callPackage /home/morxemplum/Documents/pkgs/mcpelauncher-client/package.nix {})
+		# (qt6Packages.callPackage /home/morxemplum/Documents/pkgs/mcpelauncher-ui-qt/package.nix {})
 	];
 
   # Enable nix command and flakes for searching purposes

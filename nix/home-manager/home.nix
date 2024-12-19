@@ -76,16 +76,6 @@ in
 			categories = [ "Network" "InstantMessaging" "Chat" ];
 			icon = "legcord";
 		};
-		# Minecraft: Bedrock Edition (mcpelauncher). It also uses AppImage (due to some of the maintainer's practices, it's REALLY hard to build a proper Nixpkg for)
-		# https://github.com/minecraft-linux/mcpelauncher-manifest
-		mcpelauncher-ui = {
-			name = "Minecraft: Bedrock Edition";
-			comment = "Play Minecraft Bedrock Edition through Android runtime";
-			exec = "appimage-run ${settings.STANDALONE_APPS_DIR}/Minecraft_Bedrock_Launcher.AppImage";
-			terminal = false;
-			categories = [ "Game" ];
-			icon = "${settings.STANDALONE_APPS_ICONS}/MC_BE.png";
-		};
 		# WlxOverlay-S: A VR overlay to let you view your desktop on Linux. It is distributed as an AppImage by default.
 		# https://github.com/galister/wlx-overlay-s
 		wlxoverlay-s = {
