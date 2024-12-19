@@ -42,6 +42,10 @@
 		experimental-features = nix-command flakes 
 	'';
 
+	# Enable support for Xbox controllers
+	hardware.xone.enable = true;
+	hardware.xpadneo.enable = true;
+
 	# Enable common container config files in /etc/containers
 	virtualisation.containers.enable = true;
 	virtualisation = {
