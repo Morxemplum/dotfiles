@@ -196,6 +196,10 @@ in
 					};
 					# While you can output the whole CSS in here, I find it better to just pull it in from a file
 					userChrome = builtins.readFile "${settings.CONFIG_DIR}/floorp/userChrome.css";
+
+					# Although Floorp does incorporate Betterfox, the maintainer recommends you reapply it.
+					# https://github.com/yokoffing/Betterfox/blob/esr128/user.js
+					extraConfig = builtins.readFile "${settings.CONFIG_DIR}/floorp/user.js";
 				};
 			};
 		};
