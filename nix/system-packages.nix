@@ -37,7 +37,7 @@
 		# (qt6Packages.callPackage /home/morxemplum/Documents/pkgs/mcpelauncher-ui-qt/package.nix {})
 	];
 
-  	# Enable nix command and flakes for searching purposes
+  # Enable nix command and flakes for searching purposes
 	nix.extraOptions = ''
 		experimental-features = nix-command flakes 
 	'';

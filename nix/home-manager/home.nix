@@ -87,6 +87,16 @@ in
 		};
 	};
 
+	# When setting the browser configurations, there are a few files that will conflict and needed to be backed up.
+	# However, home-manager refuses to delete backups, and this turns out to be on purpose. An issue has been raised about this.
+	# https://github.com/nix-community/home-manager/issues/4199
+	# https://github.com/nix-community/home-manager/pull/4971
+	home.activation.removeBrowserBackups = lib.hm.dag.entryAfter ["checkLinkTargets"] ''
+		if [ -d "${settings.HOME_DIR}/.floorp/default" ]; then
+			rm -f ${settings.HOME_DIR}/.floorp/default/search.json.mozlz4.backup
+		fi
+	'';
+
 	# App Configurations
 	programs = {
 		floorp = {
@@ -98,23 +108,23 @@ in
 				SearchBar = "unified";
 
 				Preferences = {
-					"browser.topsites.contile.enabled" = "lock-false";
-        	"browser.newtabpage.activity-stream.showSponsored" = "lock-false";
-        	"browser.newtabpage.activity-stream.system.showSponsored" = "lock-false";
-        	"browser.newtabpage.activity-stream.showSponsoredTopSites" = "lock-false";
+					"browser.topsites.contile.enabled" = { Value = false; Status = "locked"; };
+					"browser.newtabpage.activity-stream.showSponsored" = { Value = false; Status = "locked"; };
+					"browser.newtabpage.activity-stream.system.showSponsored" = { Value = false; Status = "locked"; };
+					"browser.newtabpage.activity-stream.showSponsoredTopSites" = { Value = false; Status = "locked"; };
 				};
 
 				ExtensionSettings = {
 					# uBlock Origin
-          "uBlock0@raymondhill.net" = {
-            install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
-            installation_mode = "force_installed";
-          };
+					"uBlock0@raymondhill.net" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+						installation_mode = "force_installed";
+					};
 					# Privacy Badger
-          "jid1-MnnxcxisBPnSXQ@jetpack" = {
-            install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
-            installation_mode = "force_installed";
-          };
+					"jid1-MnnxcxisBPnSXQ@jetpack" = {
+						install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
+						installation_mode = "force_installed";
+					};
 					# Tree Style Tab
 					"treestyletab@piro.sakura.ne.jp" = {
 						install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
@@ -146,6 +156,46 @@ in
 						install_url = "https://addons.mozilla.org/firefox/downloads/latest/youtube-recommended-videos/latest.xpi";
 						installation_mode = "force_installed";
 					};
+				};
+			};
+			profiles = {
+				# Default Profile, set to your username
+				default = {
+					id = 0;
+					name = "${settings.USER_NAME}";
+					search = {
+						default = "Startpage";
+						engines = {
+							"Amazon.com".metaData.hidden = true;
+							"Bing".metaData.hidden = true;
+							"eBay".metaData.hidden = true;
+							"Ecosia" = {
+								urls = [{
+									template = "https://www.ecosia.org/search";
+									params = [
+										{ name = "method"; value = "index"; }
+										{ name = "q"; value = "{searchTerms}"; }
+									];
+								}];
+								definedAliases = [ "@ec" ];
+							};
+							"Nix Packages" = {
+								urls = [{
+									template = "https://search.nixos.org/packages";
+									params = [
+										{ name = "type"; value = "packages"; }
+										{ name = "query"; value = "{searchTerms}"; }
+									];
+								}];
+								icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+								definedAliases = [ "@np" ];
+							};
+							"Wikipedia (en)".metadata.alias = "@wiki";
+							"You.com".metaData.hidden = true;
+						};
+					};
+					# While you can output the whole CSS in here, I find it better to just pull it in from a file
+					userChrome = builtins.readFile "${settings.CONFIG_DIR}/floorp/userChrome.css";
 				};
 			};
 		};
