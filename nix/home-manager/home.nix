@@ -60,6 +60,30 @@ in
 	
 	# This is mainly for applications that do not come with their own desktop files or do not respect NIXOS_OZONE_WL
 	xdg.desktopEntries = {
+		# Bopimo. A Super Mario 64 like game, but without Nintendo IP.
+		bopimo = {
+			name = "Bopimo! Client";
+			comment = "Play Bopimo! multiplayer or singleplayer";
+			exec = "/home/morxemplum/.local/share/Bopimo!/Client/bopimo_client.x86_64";
+			categories = [ "Game" ];
+			icon = "bopimo";
+		};
+		bopimo-launcher = {
+			name = "Bopimo! Launcher";
+			comment = "Bopimo’s official game launcher and updater.";
+			exec = "appimage-run ${settings.HOME_DIR}/.local/share/Bopimo!/Launcher/bopimo-launcher.AppImage --no-sandbox %U";
+			terminal = false;
+			categories = [ "Game" ];
+			icon = "bopimo";
+			mimeType = [ "x-scheme-handler/bopimo" ];
+
+			actions = {
+				"Uninstall" = {
+					name = "Uninstall";
+					exec = "appimage-run ${settings.HOME_DIR}/.local/share/Bopimo!/Launcher/bopimo-launcher.AppImage --no-sandbox --uninstall-prompt";
+				};
+			};
+		};
 		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
 		cider = {
 			name = "Cider";
