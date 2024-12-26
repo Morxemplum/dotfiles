@@ -42,6 +42,9 @@
 		experimental-features = nix-command flakes 
 	'';
 
+	# Enable flatpak
+	services.flatpak.enable = true;
+
 	# Enable support for Xbox controllers
 	hardware.xone.enable = true;
 	hardware.xpadneo.enable = true;
