@@ -1,5 +1,10 @@
 { config, pkgs, ... }:
 
+let
+  unstable = import <nixos-unstable> { 
+    config.allowUnfree = true;
+  };
+in
 {
   # Allow unfree packages
 	nixpkgs.config.allowUnfree = true;
@@ -33,8 +38,9 @@
 		appimage-run
 		distrobox
 
-		(qt6Packages.callPackage /home/morxemplum/Documents/pkgs/mcpelauncher-client/package.nix {})
-		# (qt6Packages.callPackage /home/morxemplum/Documents/pkgs/mcpelauncher-ui-qt/package.nix {})
+		# Packages I Maintain
+		unstable.mcpelauncher-client
+		unstable.mcpelauncher-ui-qt
 	];
 
   # Enable nix command and flakes for searching purposes
