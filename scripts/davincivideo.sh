@@ -144,7 +144,7 @@ function setup_video_transcode() {
 # Checks to see if the video has already been transcoded, and handles the behavior according to user preferences.
 # If the user specifies overwriting files, a string with the ffmpeg overwrite flag is returned
 function find_existing_output() {
-  if [ -f $1 ]; then
+  if [ -f "$1" ]; then
     if (( OVERWRITE == 0 )); then
       echo "    Transcoded output already exists. Skipping."
       # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
@@ -192,10 +192,10 @@ function transcode_audio_tracks() {
       echo "    Transcoding Audio Track #$i"
       if (( RAW_AUDIO == 1 )); then
         ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a pcm_s16le "a$i.tmp.wav"
-        input_str="${input_str} -i a$i.tmp.wav"
+        audio_input_str="${audio_input_str} -i a$i.tmp.wav"
       else
         ffmpeg -y -hide_banner -loglevel warning -stats -i "$1" -map 0:a:$i -c:a libmp3lame "a$i.tmp.mp3"
-        input_str="${input_str} -i a$i.tmp.mp3"
+        audio_input_str="${audio_input_str} -i a$i.tmp.mp3"
       fi
       tc=1
       tcr=1
@@ -314,22 +314,22 @@ fi
 echo $1
 
 output_file=""
-format_file_name $1
+format_file_name "$1"
 
 vtranscode_str="-c:v copy"
 file_container="mov"
-setup_video_transcode $1
+setup_video_transcode "$1"
 
 output_file="${output_file}.$file_container"
 overwrite_str=""
 find_existing_output $output_file
 
-input_str="-i $1"
+audio_input_str=""
 map_str="-map 0:v"
-transcode_audio_tracks $1 $file_container
+transcode_audio_tracks "$1" $file_container
 
 # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $input_str $vtranscode_str -c:a copy $map_str "$output_file"
+ffmpeg $overwrite_str -hide_banner -loglevel warning -stats -i "$1" $audio_input_str $vtranscode_str -c:a copy $map_str "$output_file"
 
 echo "Conversion completed. Output file: $output_file"
 
