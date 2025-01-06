@@ -27,7 +27,7 @@ in
 	 	
 	 	# Creative
 	 	darktable
-	 	# davinci-resolve # Commenting out as davinci-resolve currently has problems on Wayland and it doesn't recognize new NVIDIA drivers atm
+	 	davinci-resolve
 	 	gimp
 		inkscape
 	 	obs-studio
