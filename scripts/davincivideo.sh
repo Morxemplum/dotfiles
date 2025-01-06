@@ -82,7 +82,7 @@ function format_file_name() {
 # Returns with video_transcode and switch_container to their appropriate values
 function video_codec_check() {
   # Is the video using a codec DV4L doesn't support?
-  if [[ ($1 == "h264" || $1 == "h265") && $STUDIO == "0" ]]; then
+  if [[ ($1 == "h264" || $1 == "avc" || $1 == "h265" || $1 == "hevc") && $STUDIO == "0" ]]; then
     video_transcode=1
     echo "    Video needs transcoding"
   # Free codecs (like VP9 and AV1) are not compatible with MOV, so if we must preserve that codec, then we need to switch the container
