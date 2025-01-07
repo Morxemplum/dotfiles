@@ -15,6 +15,9 @@ function list_help_info() {
   echo "    -o | --output    [dir] Allows the user to specify a custom directory to output"
   echo "                           transcoded media. By default, transcoded media will output to"
   echo "                           the same folder as their original counterpart"
+  echo "    --overwrite  [yes|ask] Allows media to be retranscoded and overwrite previous copies."
+  echo "                           yes will overwrite media automatically, ask will ask the user"
+  echo "                           to overwrite for each existing transcode found."
   echo ""
   echo "Hardware Acceleration:"
   echo "    By default, this script will use software encoding to ensure the best compatibility."
@@ -35,15 +38,11 @@ function list_help_info() {
 }
 
 SHORT_ARGS="ho"
-LONG_ARGS=help,output,nvidia,vaapi,vulkan
+LONG_ARGS=help,output,overwrite,nvidia,vaapi,vulkan
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 OUTPUT_DEST=""
-# HARDWARE_ACC has a different range of values depending on what the user chooses (based on their hardware)
-# 0 = Software Encoding (No hardware encoding)
-# 1 = NVIDIA NVENC + CUDA
-# 2 = VAAPI (AMD + Intel)
-# 3 = Vulkan (Cross compatible with all GPUs, experimental)
+OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
 # TODO: Expand this to support H265 and AV1
 OUTPUT_CODEC="h264"
@@ -65,6 +64,23 @@ function format_file_name() {
   output_file="$DESTINATION-D"
 }
 
+# find_existing_output(output_file)
+# Checks to see if the video has already been transcoded, and handles the behavior according to user preferences.
+# If the user specifies overwriting files, a string with the ffmpeg overwrite flag is returned
+function find_existing_output() {
+  if [[ -f $1 ]]; then
+    if (( OVERWRITE == 0 )); then
+      echo "    Transcoded output already exists. Skipping."
+      # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
+      exit 0
+    elif (( OVERWRITE == 1 )); then
+      echo "    Transcoded output already exists. Overwriting."
+      overwrite_str="-y"
+    fi
+    # As for 2, we don't need to do anything as ffmpeg will handle the prompt for us
+  fi
+}
+
 while true; do 
   case "$1" in
     # General options
@@ -73,6 +89,18 @@ while true; do
       ;;
     -o|--output)
       OUTPUT_DEST=$2
+      shift 2
+      ;;
+    --overwrite)
+      lower=$(awk "BEGIN { print tolower(\"$2\") }")
+      if [[ $lower == "y" || $lower == "yes" ]]; then
+        OVERWRITE=1
+      elif [[ $lower == "a" || $lower == "ask" ]]; then
+        OVERWRITE=2
+      else
+        echo "ERROR: Invalid/missing input for overwrite flag"
+        exit 1
+      fi
       shift 2
       ;;
     # Hardware Acceleration
@@ -119,6 +147,7 @@ if [ "$OUTPUT_DEST" != "" ]; then
   fi
 fi
 
+# Configure Hardware acceleration settings
 hw_accel_flags=""
 if (( HARDWARE_ACC == 1 )); then
   echo "Using NVENC acceleration"
@@ -141,6 +170,7 @@ if (( HARDWARE_ACC != 0 )); then
   hw_accel_flags="${hw_accel_flags} -hwaccel_device 0" # If your GPU is somewhere else, change this
 fi
 
+# Select the appropriate codec
 codec="libx264"
 if [[ $OUTPUT_CODEC == "h264" && $HARDWARE_ACC -ne 0 ]]; then
   if (( HARDWARE_ACC == 1 )); then
@@ -171,27 +201,7 @@ elif [[ $OUTPUT_CODEC == "av1" ]]; then
   fi
 fi
 
-# BEGIN VIDEO CONVERSION
-echo $1
- 
-output_file=""
-format_file_name "$1"
-
-file_container="mp4"
-if [ $OUTPUT_CODEC == "av1" ]; then
-  file_container="mkv"
-fi
-
-# TODO: Add overwriting flag
-output_file="${output_file}.$file_container"
-# overwrite_str=""
-# find_existing_output $output_file
-
 # TODO: Add quality presets that will streamline this process
-# Option in Video: FFmpeg command with hardware acceleration and encoding parameters
-# For a higher bitrate try changing -qp 15 to -qp 10
-
-# Software encoding is going to handling quality a bit more differently
 video_quality_flags="-qp 15 -bf 2"
 audio_flags="-codec:a aac -b:a 384k -r:a 48000"
 
@@ -210,7 +220,21 @@ else
   format_flags="${format_flags} -vf yadif -pix_fmt yuv420p"
 fi
 
+# BEGIN VIDEO CONVERSION
+echo $1
+ 
+output_file=""
+format_file_name "$1"
 
-ffmpeg -hide_banner -loglevel warning -stats $hw_accel_flags -i "$1" $format_flags -codec:v $codec $video_quality_flags $audio_flags "$output_file"
+file_container="mp4"
+if [ $OUTPUT_CODEC == "av1" ]; then
+  file_container="mkv"
+fi
+
+output_file="${output_file}.$file_container"
+overwrite_str=""
+find_existing_output "$output_file"
+
+ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $hw_accel_flags -i "$1" $format_flags -codec:v $codec $video_quality_flags $audio_flags "$output_file"
  
 echo "Conversion completed. Output file: $output_file"

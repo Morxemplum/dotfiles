@@ -144,7 +144,7 @@ function setup_video_transcode() {
 # Checks to see if the video has already been transcoded, and handles the behavior according to user preferences.
 # If the user specifies overwriting files, a string with the ffmpeg overwrite flag is returned
 function find_existing_output() {
-  if [ -f "$1" ]; then
+  if [[] -f $1 ]]; then
     if (( OVERWRITE == 0 )); then
       echo "    Transcoded output already exists. Skipping."
       # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
@@ -322,7 +322,7 @@ setup_video_transcode "$1"
 
 output_file="${output_file}.$file_container"
 overwrite_str=""
-find_existing_output $output_file
+find_existing_output "$output_file"
 
 audio_input_str=""
 map_str="-map 0:v"
