@@ -2,7 +2,7 @@
 
 # Name: davincideliver.sh (davincimp4.sh)
 # Author: Morxemplum, originally by Danie van der Merwe
-# Depends on: ffprobe, ffmpeg
+# Depends on: ffmpeg
 #
 # Description: This is a shell script that takes exported DaVinci Resolve
 #              renders and transcodes them into a deliverable video format.              
@@ -157,13 +157,13 @@ hw_accel_flags="${hw_accel_flags} -hwaccel_device 0" # If your GPU is somewhere 
 
 # These are format flags that each do the following
 # yadif (yet another deinterlacing format): Removes any interlacing artifacts that may be present in the video
-# +cgop (closed group of pictures): This changes from open gop to closed gop. This was removed as we are done editing the video and don't need to edit it anymore
-# TODO: Perhaps add a flag to enable cgop
+# +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
 # pix_fmt: Pixel format. yuv420p will do the trick in most cases, unless you plan on doing HDR content or utilize better chroma subsampling
 # TODO: Tailor the pixel format based on bit depth, and perhaps use a higher subsampling (4:2:2) or none when dealing with higher quality presets
-format_flags="-vf yadif -pix_fmt yuv420p"
+# faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
+format_flags="-vf yadif -flags +cgop -pix_fmt yuv420p -movflags faststart"
 
-ffmpeg $hw_accel_flags_nvidia -i "$1" $format_flags -codec:v h264_nvenc -qp 15 -bf 2 -codec:a aac -strict -2 -b:a 384k -r:a 48000 -movflags faststart "$output_file"
+ffmpeg $hw_accel_flags_nvidia -i "$1" $format_flags -codec:v h264_nvenc -qp 15 -bf 2 -codec:a aac -strict -2 -b:a 384k -r:a 48000 "$output_file"
  
 # Another Nvidia option
 # ffmpeg -y -hwaccel cuda -hwaccel_output_format cuda -i "$input_file.mov" -c:a copy -c:v h264_nvenc -b:v 10M -fps_mode passthrough "$output_file"
