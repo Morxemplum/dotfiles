@@ -62,6 +62,143 @@ OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
 OUTPUT_CODEC="h264"
 
+# get_hardware_flags()
+# Takes a look at the given hardware acceleration and sets the appropriate flags
+# Returns a string of the hardware acceleration flags
+function get_hardware_flags() {
+  if (( HARDWARE_ACC == 1 )); then
+    echo "Using NVENC acceleration"
+    hw_accel_flags="-hwaccel cuda"
+  elif (( HARDWARE_ACC == 2 )); then
+    echo "Using VAAPI acceleration"
+    hw_accel_flags="-hwaccel vaapi"
+  elif (( HARDWARE_ACC == 3 )); then
+    echo "Using Vulkan acceleration"
+    echo "   WARNING: Vulkan acceleration is experimental."
+    hw_accel_flags="-hwaccel vulkan"
+  elif (( HARDWARE_ACC != 0 )); then
+    echo "Error: Invalid hardware acceleration value detected!"
+    exit 1
+  else
+    echo "Using software encoding"
+  fi
+
+  if (( HARDWARE_ACC != 0 )); then
+    hw_accel_flags="${hw_accel_flags} -hwaccel_device 0" # If your GPU is somewhere else, change this
+  fi
+}
+
+# get_video_codec()
+# Based on hardware acceleration and chosen codec, choose the appropriate library.
+# Returns the name of the library that follows the chosen codec with the corresponding acceleration
+function get_video_codec() {
+  if [[ $OUTPUT_CODEC == "h264" && $HARDWARE_ACC -ne 0 ]]; then
+    if (( HARDWARE_ACC == 1 )); then
+      codec="h264_nvenc"
+    elif (( HARDWARE_ACC == 2 )); then
+      codec="h264_vaapi"
+    else
+      codec="h264_vulkan"
+    fi
+  elif [[ $OUTPUT_CODEC == "h265" ]]; then
+    codec="libx265"
+    if (( HARDWARE_ACC == 1 )); then
+      codec="hevc_nvenc"
+    elif (( HARDWARE_ACC == 2 )); then
+      codec="hevc_vaapi"
+    elif (( HARDWARE_ACC == 3 )); then
+      codec="hevc_vulkan"
+      echo "   ERROR: hevc_vulkan is currently broken at the moment. Please revert back to h264 until it is fixed."
+      exit 1
+    fi
+  elif [[ $OUTPUT_CODEC == "av1" ]]; then
+    codec="libsvtav1"
+    if (( HARDWARE_ACC == 1 )); then
+      codec="av1_nvenc"
+    elif (( HARDWARE_ACC == 2 )); then
+      codec="av1_vaapi"
+    elif (( HARDWARE_ACC == 3 )); then
+      codec="av1_vulkan"
+      echo "   WARNING: AV1 on Vulkan acceleration is *highly* experimental. There is a high chance it will not transcode (properly) as there's no official specification."
+    fi
+  fi
+}
+
+# calculate_video_quality()
+# Based on hardware acceleration, codec, and a given quality preset, calculate an appropriate quality factor for the output video
+# Returns a quantization factor for constant quality, along with the corresponding flag name for constant quality (it varies depending on the library)
+function calculate_video_quality() {
+  # TODO: Add a constant bitrate flag that will skip all these checks and just use a constant bitrate instead
+  # Low priority because constant bitrate tends to not save that much space, but also will not do well with batch transcoding
+  if [[ $OUTPUT_CODEC == "h264" ]]; then
+    quantization=$(awk "BEGIN { print int(11 + 4 * ${QUALITY}) }")
+    if (( HARDWARE_ACC == 1 )); then
+      quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
+      quality_name="cq"
+    elif (( HARDWARE_ACC == 2 )); then
+      quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
+      quality_name="qp"
+    elif (( HARDWARE_ACC == 3 )); then
+      quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
+      quality_name="qp"
+    fi
+  elif [[ $OUTPUT_CODEC == "h265" ]]; then
+    quantization=$(awk "BEGIN { print int(14 + 3.7 * ${QUALITY}) }")
+    if (( HARDWARE_ACC == 1 )); then
+      quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
+      quality_name="cq"
+    elif (( HARDWARE_ACC == 2 )); then
+      quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
+      quality_name="qp"
+    elif (( HARDWARE_ACC == 3 )); then
+      quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
+      quality_name="qp"
+    fi
+  elif [[ $OUTPUT_CODEC == "av1" ]]; then
+    quantization=$(awk "BEGIN { print int(16 + 3.5 * ${QUALITY}) }")
+    # I don't have a NVIDIA card that supports AV1 hardware encoding, so these values are just estimates.
+    if (( HARDWARE_ACC == 1 )); then
+      quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
+      quality_name="cq"
+    elif (( HARDWARE_ACC == 2 )); then
+      quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
+      quality_name="qp"
+    elif (( HARDWARE_ACC == 3 )); then
+      quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
+      quality_name="qp"
+    fi
+  fi
+}
+
+# get_format_flags()
+# Based on hardware acceleration and quality presets, it will fine tune various video formatting flags to further set the quality of the video, remove defects, and improve viewing experience
+# Returns a string of various formatting flags
+function get_format_flags() {
+  # +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
+  format_flags="-flags +cgop"
+  if (( HARDWARE_ACC == 3 )); then
+    # When using Vulkan hardware acceleration, you must use the vulkan pixel format, as it is not compatible with YUV.
+    # In addition, a couple other flags are needed for vulkan acceleration, possibly reducing compatibility
+    format_flags="${format_flags} -vf yadif,format=nv12,hwupload -pix_fmt vulkan"
+  else
+    # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
+    format_flags="${format_flags} -vf yadif"
+    # DNxHR HQ only goes up to 4:2:2 subsampling. However, NVENC will not accept yuv422. So no subsampling is done instead.
+    chroma="444" 
+    if (( QUALITY >= 3 )); then
+      chroma="420"
+    fi
+    # pix_fmt: Pixel format. This is where chroma subsampling and bit-depth are involved.
+    # TODO: If you wanna add HDR support, then append a suffix "10le" to the pix_fmt
+    format_flags="${format_flags} -pix_fmt yuv${chroma}p"
+  fi
+  if [[ $file_container == "mp4" ]]; then
+    # faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
+    # This is needed for the mp4 container, but not for the mkv container
+    format_flags="${format_flags} -movflags faststart"
+  fi
+}
+
 # format_file_name(input_file_name)
 # Formats the input file name to match the file path and naming convention of the output file
 # Returns the output file name
@@ -177,59 +314,11 @@ fi
 
 # Configure Hardware acceleration settings
 hw_accel_flags=""
-if (( HARDWARE_ACC == 1 )); then
-  echo "Using NVENC acceleration"
-  hw_accel_flags="-hwaccel cuda"
-elif (( HARDWARE_ACC == 2 )); then
-  echo "Using VAAPI acceleration"
-  hw_accel_flags="-hwaccel vaapi"
-elif (( HARDWARE_ACC == 3 )); then
-  echo "Using Vulkan acceleration"
-  echo "   WARNING: Vulkan acceleration is experimental."
-  hw_accel_flags="-hwaccel vulkan"
-elif (( HARDWARE_ACC != 0 )); then
-  echo "Error: Invalid hardware acceleration value detected!"
-  exit 1
-else
-  echo "Using software encoding"
-fi
-
-if (( HARDWARE_ACC != 0 )); then
-  hw_accel_flags="${hw_accel_flags} -hwaccel_device 0" # If your GPU is somewhere else, change this
-fi
+get_hardware_flags
 
 # Select the appropriate codec
 codec="libx264"
-if [[ $OUTPUT_CODEC == "h264" && $HARDWARE_ACC -ne 0 ]]; then
-  if (( HARDWARE_ACC == 1 )); then
-    codec="h264_nvenc"
-  elif (( HARDWARE_ACC == 2 )); then
-    codec="h264_vaapi"
-  else
-    codec="h264_vulkan"
-  fi
-elif [[ $OUTPUT_CODEC == "h265" ]]; then
-  codec="libx265"
-  if (( HARDWARE_ACC == 1 )); then
-    codec="hevc_nvenc"
-  elif (( HARDWARE_ACC == 2 )); then
-    codec="hevc_vaapi"
-  elif (( HARDWARE_ACC == 3 )); then
-    codec="hevc_vulkan"
-    echo "   ERROR: hevc_vulkan is currently broken at the moment. Please revert back to h264 until it is fixed."
-    exit 1
-  fi
-elif [[ $OUTPUT_CODEC == "av1" ]]; then
-  codec="libsvtav1"
-  if (( HARDWARE_ACC == 1 )); then
-    codec="av1_nvenc"
-  elif (( HARDWARE_ACC == 2 )); then
-    codec="av1_vaapi"
-  elif (( HARDWARE_ACC == 3 )); then
-    codec="av1_vulkan"
-    echo "   WARNING: AV1 on Vulkan acceleration is *highly* experimental. There is a high chance it will not transcode (properly) as there's no official specification."
-  fi
-fi
+get_video_codec
 
 video_quality_flags="-bf 2"
 audio_flags="-codec:a aac -b:a 384k -r:a 48000"
@@ -237,78 +326,16 @@ audio_flags="-codec:a aac -b:a 384k -r:a 48000"
 # Calculate Quantization values. They vary depending on the codec, and also the specific implementations
 quantization=0
 quality_name="crf"
-
-# TODO: Add a constant bitrate flag that will skip all these checks and just use a constant bitrate instead
-if [[ $OUTPUT_CODEC == "h264" ]]; then
-  quantization=$(awk "BEGIN { print int(11 + 4 * ${QUALITY}) }")
-  if (( HARDWARE_ACC == 1 )); then
-    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
-    quality_name="cq"
-  elif (( HARDWARE_ACC == 2 )); then
-    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
-    quality_name="qp"
-  elif (( HARDWARE_ACC == 3 )); then
-    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
-    quality_name="qp"
-  fi
-elif [[ $OUTPUT_CODEC == "h265" ]]; then
-  quantization=$(awk "BEGIN { print int(14 + 3.7 * ${QUALITY}) }")
-  if (( HARDWARE_ACC == 1 )); then
-    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
-    quality_name="cq"
-  elif (( HARDWARE_ACC == 2 )); then
-    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
-    quality_name="qp"
-  elif (( HARDWARE_ACC == 3 )); then
-    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
-    quality_name="qp"
-  fi
-elif [[ $OUTPUT_CODEC == "av1" ]]; then
-  quantization=$(awk "BEGIN { print int(16 + 3.5 * ${QUALITY}) }")
-  # I don't have a NVIDIA card that supports AV1 hardware encoding, so these values are just estimates.
-  if (( HARDWARE_ACC == 1 )); then
-    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
-    quality_name="cq"
-  elif (( HARDWARE_ACC == 2 )); then
-    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
-    quality_name="qp"
-  elif (( HARDWARE_ACC == 3 )); then
-    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
-    quality_name="qp"
-  fi
-fi
-
+calculate_video_quality
 video_quality_flags="${video_quality_flags} -${quality_name} ${quantization}"
 
 file_container="mp4"
+# AV1 can not be contained by mp4. I'm choosing to switch to Matroska instead of webm.
 if [ $OUTPUT_CODEC == "av1" ]; then
   file_container="mkv"
 fi
 
-# These are format flags that each do the following
-# yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
-# +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
-# pix_fmt: Pixel format. This is where chroma subsampling and bit-depth are involved.
-format_flags="-flags +cgop"
-if (( HARDWARE_ACC == 3 )); then
-  # When using Vulkan hardware acceleration, you must use the vulkan pixel format, as it is not compatible with YUV.
-  # In addition, a couple other flags are needed for vulkan acceleration, possibly reducing compatibility
-  format_flags="${format_flags} -vf yadif,format=nv12,hwupload -pix_fmt vulkan"
-else
-  format_flags="${format_flags} -vf yadif"
-  # DNxHR HQ only goes up to 4:2:2 subsampling. However, NVENC will not accept yuv422. So no subsampling is done instead.
-  chroma="444" 
-  if (( QUALITY >= 3 )); then
-    chroma="420"
-  fi
-  # TODO: If you wanna add HDR support, then append a suffix "10le" to the pix_fmt
-  format_flags="${format_flags} -pix_fmt yuv${chroma}p"
-fi
-if [[ $file_container == "mp4" ]]; then
-  # faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
-  # This is needed for the mp4 container, but not for the mkv container
-  format_flags="${format_flags} -movflags faststart"
-fi
+get_format_flags
 
 # BEGIN VIDEO CONVERSION
 echo $1
