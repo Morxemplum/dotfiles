@@ -14,7 +14,10 @@ function list_help_info() {
   echo "    -h | --help            Lists the usage and flags that can be used."
   echo "    -o | --output    [dir] Allows the user to specify a custom directory to output"
   echo "                           transcoded media. By default, transcoded media will output to"
-  echo "                           the same folder as their original counterpart"
+  echo "                           the same folder as their original counterpart."
+  echo "    -q | --quality  [0-10] Allows for you to easily tune the quality of the deliverable"
+  echo "                           using calculated presets. A higher value will reduce quality"
+  echo "                           for a lower file size. 0 will be visually lossless"
   echo "    --overwrite  [yes|ask] Allows media to be retranscoded and overwrite previous copies."
   echo "                           yes will overwrite media automatically, ask will ask the user"
   echo "                           to overwrite for each existing transcode found."
@@ -49,11 +52,12 @@ function list_help_info() {
   echo "Requires ffmpeg for usage."
 }
 
-SHORT_ARGS="ho"
-LONG_ARGS=help,output,overwrite,nvidia,vaapi,vulkan,hevc,av1
+SHORT_ARGS="hoq"
+LONG_ARGS=help,output,quality,overwrite,nvidia,vaapi,vulkan,hevc,av1
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 OUTPUT_DEST=""
+QUALITY=3
 OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
 OUTPUT_CODEC="h264"
@@ -100,6 +104,10 @@ while true; do
       ;;
     -o|--output)
       OUTPUT_DEST=$2
+      shift 2
+      ;;
+    -q|--quality)
+      QUALITY=$2
       shift 2
       ;;
     --overwrite)
@@ -231,42 +239,41 @@ quantization=0
 quality_name="crf"
 
 # TODO: Add a constant bitrate flag that will skip all these checks and just use a constant bitrate instead
-# TODO: Add quality presets that will scale the quantization according to the presets
 if [[ $OUTPUT_CODEC == "h264" ]]; then
-  quantization=11
+  quantization=$(awk "BEGIN { print int(11 + 4 * ${QUALITY}) }")
   if (( HARDWARE_ACC == 1 )); then
-    quantization=18
+    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
     quality_name="cq"
   elif (( HARDWARE_ACC == 2 )); then
-    quantization=18
+    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
     quality_name="qp"
   elif (( HARDWARE_ACC == 3 )); then
-    quantization=18
+    quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
     quality_name="qp"
   fi
 elif [[ $OUTPUT_CODEC == "h265" ]]; then
-  quantization=14
+  quantization=$(awk "BEGIN { print int(14 + 3.7 * ${QUALITY}) }")
   if (( HARDWARE_ACC == 1 )); then
-    quantization=22
+    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
     quality_name="cq"
   elif (( HARDWARE_ACC == 2 )); then
-    quantization=22
+    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
     quality_name="qp"
   elif (( HARDWARE_ACC == 3 )); then
-    quantization=22
+    quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
     quality_name="qp"
   fi
 elif [[ $OUTPUT_CODEC == "av1" ]]; then
-  quantization=16
+  quantization=$(awk "BEGIN { print int(16 + 3.5 * ${QUALITY}) }")
   # I don't have a NVIDIA card that supports AV1 hardware encoding, so these values are just estimates.
   if (( HARDWARE_ACC == 1 )); then
-    quantization=23
+    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
     quality_name="cq"
   elif (( HARDWARE_ACC == 2 )); then
-    quantization=23
+    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
     quality_name="qp"
   elif (( HARDWARE_ACC == 3 )); then
-    quantization=23
+    quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
     quality_name="qp"
   fi
 fi
@@ -281,15 +288,21 @@ fi
 # These are format flags that each do the following
 # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
 # +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
-# pix_fmt: Pixel format. yuv420p will do the trick in most cases, unless you plan on doing HDR content or utilize better chroma subsampling
-# TODO: Tailor the pixel format based on bit depth, and perhaps use a higher subsampling (4:2:2) or none when dealing with higher quality presets
+# pix_fmt: Pixel format. This is where chroma subsampling and bit-depth are involved.
 format_flags="-flags +cgop"
 if (( HARDWARE_ACC == 3 )); then
   # When using Vulkan hardware acceleration, you must use the vulkan pixel format, as it is not compatible with YUV.
   # In addition, a couple other flags are needed for vulkan acceleration, possibly reducing compatibility
   format_flags="${format_flags} -vf yadif,format=nv12,hwupload -pix_fmt vulkan"
 else
-  format_flags="${format_flags} -vf yadif -pix_fmt yuv420p"
+  format_flags="${format_flags} -vf yadif"
+  # DNxHR HQ only goes up to 4:2:2 subsampling. However, NVENC will not accept yuv422. So no subsampling is done instead.
+  chroma="444" 
+  if (( QUALITY >= 3 )); then
+    chroma="420"
+  fi
+  # TODO: If you wanna add HDR support, then append a suffix "10le" to the pix_fmt
+  format_flags="${format_flags} -pix_fmt yuv${chroma}p"
 fi
 if [[ $file_container == "mp4" ]]; then
   # faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
