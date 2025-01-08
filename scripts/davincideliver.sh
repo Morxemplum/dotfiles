@@ -133,7 +133,7 @@ function calculate_video_quality() {
       quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
       quality_name="qp"
     fi
-  elif [[ $OUTPUT_CODEC == "h265" ]]; then
+  elif [[ $OUTPUT_CODEC == "hevc" ]]; then
     quantization=$(awk "BEGIN { print int(14 + 3.7 * ${QUALITY}) }")
     if (( HARDWARE_ACC == 1 )); then
       quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
