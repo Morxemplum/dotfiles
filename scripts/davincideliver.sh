@@ -92,35 +92,29 @@ function get_hardware_flags() {
 # Based on hardware acceleration and chosen codec, choose the appropriate library.
 # Returns the name of the library that follows the chosen codec with the corresponding acceleration
 function get_video_codec() {
-  if [[ $OUTPUT_CODEC == "h264" && $HARDWARE_ACC -ne 0 ]]; then
-    if (( HARDWARE_ACC == 1 )); then
-      codec="h264_nvenc"
-    elif (( HARDWARE_ACC == 2 )); then
-      codec="h264_vaapi"
-    else
-      codec="h264_vulkan"
+  if (( HARDWARE_ACC == 0 )); then
+    # libx264 is default
+    if [[ $OUTPUT_CODEC == "hevc" ]]; then
+      codec="libx265"
+    elif [[ $OUTPUT_CODEC == "av1" ]]; then
+      codec="libsvtav1"
     fi
-  elif [[ $OUTPUT_CODEC == "h265" ]]; then
-    codec="libx265"
-    if (( HARDWARE_ACC == 1 )); then
-      codec="hevc_nvenc"
-    elif (( HARDWARE_ACC == 2 )); then
-      codec="hevc_vaapi"
-    elif (( HARDWARE_ACC == 3 )); then
-      codec="hevc_vulkan"
+  else
+    codec="${OUTPUT_CODEC}"
+  fi
+
+  if (( HARDWARE_ACC == 1 )); then
+    codec="${codec}_nvenc"
+  elif (( HARDWARE_ACC == 2 )); then
+    codec="${codec}_vaapi"
+  elif (( HARDWARE_ACC == 3 )); then
+    codec="${codec}_vulkan"
+    if [[ $OUTPUT_CODEC == "hevc" ]];
       echo "   ERROR: hevc_vulkan is currently broken at the moment. Please revert back to h264 until it is fixed."
       exit 1
-    fi
-  elif [[ $OUTPUT_CODEC == "av1" ]]; then
-    codec="libsvtav1"
-    if (( HARDWARE_ACC == 1 )); then
-      codec="av1_nvenc"
-    elif (( HARDWARE_ACC == 2 )); then
-      codec="av1_vaapi"
-    elif (( HARDWARE_ACC == 3 )); then
-      codec="av1_vulkan"
+    elif [[ $OUTPUT_CODEC == "av1" ]];
       echo "   WARNING: AV1 on Vulkan acceleration is *highly* experimental. There is a high chance it will not transcode (properly) as there's no official specification."
-    fi
+    end
   fi
 }
 
@@ -135,10 +129,7 @@ function calculate_video_quality() {
     if (( HARDWARE_ACC == 1 )); then
       quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
       quality_name="cq"
-    elif (( HARDWARE_ACC == 2 )); then
-      quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
-      quality_name="qp"
-    elif (( HARDWARE_ACC == 3 )); then
+    elif (( HARDWARE_ACC == 2 || HARDWARE_ACC == 3 )); then
       quantization=$(awk "BEGIN { print int(18 + 3.3 * ${QUALITY}) }")
       quality_name="qp"
     fi
@@ -147,10 +138,7 @@ function calculate_video_quality() {
     if (( HARDWARE_ACC == 1 )); then
       quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
       quality_name="cq"
-    elif (( HARDWARE_ACC == 2 )); then
-      quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
-      quality_name="qp"
-    elif (( HARDWARE_ACC == 3 )); then
+    elif (( HARDWARE_ACC == 2 || HARDWARE_ACC == 3 )); then
       quantization=$(awk "BEGIN { print int(22 + 2.9 * ${QUALITY}) }")
       quality_name="qp"
     fi
@@ -160,10 +148,7 @@ function calculate_video_quality() {
     if (( HARDWARE_ACC == 1 )); then
       quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
       quality_name="cq"
-    elif (( HARDWARE_ACC == 2 )); then
-      quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
-      quality_name="qp"
-    elif (( HARDWARE_ACC == 3 )); then
+    elif (( HARDWARE_ACC == 2 || HARDWARE_ACC == 3 )); then
       quantization=$(awk "BEGIN { print int(23 + 2.8 * ${QUALITY}) }")
       quality_name="qp"
     fi
@@ -274,7 +259,7 @@ while true; do
       ;;
     # Video codecs
     --hevc)
-      OUTPUT_CODEC="h265"
+      OUTPUT_CODEC="hevc"
       shift
       ;;
     --av1)
