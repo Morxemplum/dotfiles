@@ -201,9 +201,30 @@ elif [[ $OUTPUT_CODEC == "av1" ]]; then
   fi
 fi
 
-# TODO: Add quality presets that will streamline this process
-video_quality_flags="-qp 15 -bf 2"
+video_quality_flags="-bf 2"
 audio_flags="-codec:a aac -b:a 384k -r:a 48000"
+
+# Calculate Quantization values. They vary depending on the codec, and also the specific implementations
+quantization=0
+quality_name="crf"
+
+# TODO: Add a constant bitrate flag that will skip all these checks and just use a constant bitrate instead
+# TODO: Add quality presets that will scale the quantization according to the presets
+if [[ $OUTPUT_CODEC == "h264" ]]; then
+  quantization=11
+  if (( HARDWARE_ACC == 1 )); then
+    quantization=18
+    quality_name="cq"
+  elif (( HARDWARE_ACC == 2 )); then
+    quantization=18
+    quality_name="qp"
+  elif (( HARDWARE_ACC == 3 )); then
+    quantization=18
+    quality_name="qp"
+  fi
+fi
+
+video_quality_flags="${video_quality_flags} -${quality_name} ${quantization}"
 
 # These are format flags that each do the following
 # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
