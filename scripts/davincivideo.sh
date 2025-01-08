@@ -13,11 +13,12 @@
 #              - Has a quickhand method of generating proxy media
 #              - Transcodes audio tracks to MP3 (libmp3lame) by default
 #              - Selectively encodes all audio tracks in a video file
-#
-# TODO: Support batch conversion
+#              - Allows you to transcode multiple files in one run
 
 function list_help_info() {
   echo "Usage: davincivideo.sh [options] input_video"
+  echo "       davincivideo.sh [options] input_video_one input_video_two ..."
+  echo "       <Line-separated absolute paths to file names> | davincivideo.sh [options]"
   echo ""
   echo "Options:"
   echo "    -h | --help            Lists the usage and flags that can be used."
@@ -144,12 +145,10 @@ function setup_video_transcode() {
 # Checks to see if the video has already been transcoded, and handles the behavior according to user preferences.
 # If the user specifies overwriting files, a string with the ffmpeg overwrite flag is returned
 function find_existing_output() {
-  if [[] -f $1 ]]; then
+  if [[ -f $1 ]]; then
     if (( OVERWRITE == 0 )); then
       echo "    Transcoded output already exists. Skipping."
-      # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
-      rm metadata.tmp.txt
-      exit 0
+      failed=1
     elif (( OVERWRITE == 1 )); then
       echo "    Transcoded output already exists. Overwriting."
       overwrite_str="-y"
@@ -269,8 +268,27 @@ while true; do
   esac
 done
 
-# Check if an input file is provided
-if [[ $# -eq 0 ]]; then
+files=()
+# Accept piped input. Files are delimited by lines.
+if [ -p /dev/stdin ]; then
+  iter=0
+  while read line; do
+    files[$iter]="${line}"
+    iter=$((iter+1))
+  done
+  if [[ $# -gt 0 ]]; then
+    # I'm sure I could idiot-proof it and write a way to accept both simultaneously, but it's not a high priority.
+    echo "ERROR: You have both piped input and file arguments, which are mutually exclusive. Please shift one into the other and try again."
+    exit 1
+  fi
+# Alternative is to accept arguments
+elif [[ $# -gt 0 ]]; then
+  iter=0
+  for var in "$@"; do
+    files[$iter]="${var}"
+    iter=$((iter+1))
+  done
+else
   list_help_info
   exit 0
 fi
@@ -278,6 +296,7 @@ fi
 # Pre-batch variables
 video_metadata="codec_name"
 tcr=0 # Boolean to check if ANY audio track was transcoded
+failed=0
 
 # Check if an output destination was specified, and if it exists.
 if [ "$OUTPUT_DEST" != "" ]; then
@@ -311,27 +330,40 @@ fi
 
 # BEGIN VIDEO CONVERSION
 
-echo $1
+for file in "${files[@]}"; do
+  echo "$file"
+  # TODO: Incoporate more sanity checks on the files. We want only video files!
+  if [[ ! -f "$file" ]]; then
+    echo "    File \""$file"\" not found. Skipping."
+    continue
+  fi
 
-output_file=""
-format_file_name "$1"
+  output_file=""
+  format_file_name "$file"
 
-vtranscode_str="-c:v copy"
-file_container="mov"
-setup_video_transcode "$1"
+  vtranscode_str="-c:v copy"
+  file_container="mov"
+  setup_video_transcode "$file"
 
-output_file="${output_file}.$file_container"
-overwrite_str=""
-find_existing_output "$output_file"
+  output_file="${output_file}.$file_container"
+  overwrite_str=""
+  find_existing_output "$output_file"
+  if (( failed == 1 )); then
+    failed=0
+    continue
+  fi
 
-audio_input_str=""
-map_str="-map 0:v"
-transcode_audio_tracks "$1" $file_container
+  audio_input_str=""
+  map_str="-map 0:v"
+  transcode_audio_tracks "$file" $file_container
 
-# Use ffmpeg to convert the MP4 file to MOV with the specified framerate
-ffmpeg $overwrite_str -hide_banner -loglevel warning -stats -i "$1" $audio_input_str $vtranscode_str -c:a copy $map_str "$output_file"
+  # Use ffmpeg to convert the MP4 file to MOV with the specified framerate
+  ffmpeg $overwrite_str -hide_banner -loglevel warning -stats -i "$file" $audio_input_str $vtranscode_str -c:a copy $map_str "$output_file"
 
-echo "Conversion completed. Output file: $output_file"
+  echo ""
+done
+
+echo "Conversions completed"
 
 # END VIDEO CONVERSION 
 
