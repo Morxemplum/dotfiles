@@ -34,17 +34,28 @@ function list_help_info() {
   echo "    NOTE: AV1 is still a fairly new codec, so any hardware acceleration will require a"
   echo "    fairly recent GPU to achieve."
   echo ""
+  echo "Video Codecs:"
+  echo "    By default, this script will use h264, as it's less computationally intensive and"
+  echo "    the most compatible format across the web. But it does leave a bigger file size,"
+  echo "    hence will also use more bandwidth. Below are options of more advanced codecs that"
+  echo "    can lead to a smaller file size without losing quality."
+  echo ""
+  echo "    --hevc                 Uses the H265 video codec. Twice as effective as H264."
+  echo "                           Has broader hardware support, but limited software support."
+  echo "    --av1                  Uses the AV1 video codec. About twice as effective, and a"
+  echo "                           tad more effective than H265. Is limited to more recent"
+  echo "                           hardware, but has better software support." 
+  echo ""
   echo "Requires ffmpeg for usage."
 }
 
 SHORT_ARGS="ho"
-LONG_ARGS=help,output,overwrite,nvidia,vaapi,vulkan
+LONG_ARGS=help,output,overwrite,nvidia,vaapi,vulkan,hevc,av1
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 OUTPUT_DEST=""
 OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
-# TODO: Expand this to support H265 and AV1
 OUTPUT_CODEC="h264"
 
 # format_file_name(input_file_name)
@@ -114,6 +125,15 @@ while true; do
       ;;
     --vulkan)
       HARDWARE_ACC=3
+      shift
+      ;;
+    # Video codecs
+    --hevc)
+      OUTPUT_CODEC="h265"
+      shift
+      ;;
+    --av1)
+      OUTPUT_CODEC="av1"
       shift
       ;;
     # Default cases / end of options
@@ -188,6 +208,8 @@ elif [[ $OUTPUT_CODEC == "h265" ]]; then
     codec="hevc_vaapi"
   elif (( HARDWARE_ACC == 3 )); then
     codec="hevc_vulkan"
+    echo "   ERROR: hevc_vulkan is currently broken at the moment. Please revert back to h264 until it is fixed."
+    exit 1
   fi
 elif [[ $OUTPUT_CODEC == "av1" ]]; then
   codec="libsvtav1"
@@ -222,17 +244,46 @@ if [[ $OUTPUT_CODEC == "h264" ]]; then
     quantization=18
     quality_name="qp"
   fi
+elif [[ $OUTPUT_CODEC == "h265" ]]; then
+  quantization=14
+  if (( HARDWARE_ACC == 1 )); then
+    quantization=22
+    quality_name="cq"
+  elif (( HARDWARE_ACC == 2 )); then
+    quantization=22
+    quality_name="qp"
+  elif (( HARDWARE_ACC == 3 )); then
+    quantization=22
+    quality_name="qp"
+  fi
+elif [[ $OUTPUT_CODEC == "av1" ]]; then
+  quantization=16
+  # I don't have a NVIDIA card that supports AV1 hardware encoding, so these values are just estimates.
+  if (( HARDWARE_ACC == 1 )); then
+    quantization=23
+    quality_name="cq"
+  elif (( HARDWARE_ACC == 2 )); then
+    quantization=23
+    quality_name="qp"
+  elif (( HARDWARE_ACC == 3 )); then
+    quantization=23
+    quality_name="qp"
+  fi
 fi
 
 video_quality_flags="${video_quality_flags} -${quality_name} ${quantization}"
+
+file_container="mp4"
+if [ $OUTPUT_CODEC == "av1" ]; then
+  file_container="mkv"
+fi
 
 # These are format flags that each do the following
 # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
 # +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
 # pix_fmt: Pixel format. yuv420p will do the trick in most cases, unless you plan on doing HDR content or utilize better chroma subsampling
 # TODO: Tailor the pixel format based on bit depth, and perhaps use a higher subsampling (4:2:2) or none when dealing with higher quality presets
-# faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
-format_flags="-flags +cgop -movflags faststart"
+format_flags="-flags +cgop"
 if (( HARDWARE_ACC == 3 )); then
   # When using Vulkan hardware acceleration, you must use the vulkan pixel format, as it is not compatible with YUV.
   # In addition, a couple other flags are needed for vulkan acceleration, possibly reducing compatibility
@@ -240,17 +291,17 @@ if (( HARDWARE_ACC == 3 )); then
 else
   format_flags="${format_flags} -vf yadif -pix_fmt yuv420p"
 fi
+if [[ $file_container == "mp4" ]]; then
+  # faststart: Puts most headers at the beginning of file, along with interleaving audio with video for better web performance
+  # This is needed for the mp4 container, but not for the mkv container
+  format_flags="${format_flags} -movflags faststart"
+fi
 
 # BEGIN VIDEO CONVERSION
 echo $1
  
 output_file=""
 format_file_name "$1"
-
-file_container="mp4"
-if [ $OUTPUT_CODEC == "av1" ]; then
-  file_container="mkv"
-fi
 
 output_file="${output_file}.$file_container"
 overwrite_str=""
