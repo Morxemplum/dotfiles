@@ -57,11 +57,18 @@ function list_help_info() {
   echo "    --deinterlace          Enables yadif, a library that will help remove interlacing"
   echo "                           from videos. Will slow down encoding, so only use it if you"
   echo "                           have renders with interlacing."
+  echo "    --use-bitrate   [rate] Instead of using constant quality or constant rate factor"
+  echo "                           which can fluctuate the amount of bits used, a constant"
+  echo "                           bitrate is used to enforce quality (bits/s). This should"
+  echo "                           ONLY be used if a hosting platform doesn't support"
+  echo "                           constant quality. It is imprecise and doesn't net you a lot"
+  echo "                           of savings."
+  echo "                           (Using this option will ignore the quality presets flag)"
   echo "Requires ffmpeg for usage."
 }
 
 SHORT_ARGS="hoq"
-LONG_ARGS=help,output,quality,overwrite,nvidia,vaapi,vulkan,hevc,av1
+LONG_ARGS=help,output,quality,overwrite,nvidia,vaapi,vulkan,hevc,av1,deinterlace,use-bitrate
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
 OUTPUT_DEST=""
@@ -71,6 +78,8 @@ HARDWARE_ACC=0
 OUTPUT_CODEC="h264"
 
 DEINTERLACE=0
+# Any non-zero value means constant bitrate will be used. Quality will be ignored
+CONSTANT_BITRATE=0 
 
 # get_hardware_flags()
 # Takes a look at the given hardware acceleration and sets the appropriate flags
@@ -132,8 +141,11 @@ function get_video_codec() {
 # Based on hardware acceleration, codec, and a given quality preset, calculate an appropriate quality factor for the output video
 # Returns a quantization factor for constant quality, along with the corresponding flag name for constant quality (it varies depending on the library)
 function calculate_video_quality() {
-  # TODO: Add a constant bitrate flag that will skip all these checks and just use a constant bitrate instead
-  # Low priority because constant bitrate tends to not save that much space, but also will not do well with batch transcoding
+  if [[ $CONSTANT_BITRATE != "0" ]]; then
+    quality_name="b:v"
+    quantization=$CONSTANT_BITRATE
+    return 0
+  fi
   if [[ $OUTPUT_CODEC == "h264" ]]; then
     quantization=$(awk "BEGIN { print int(11 + 4 * ${QUALITY}) }")
     if (( HARDWARE_ACC == 1 )); then
@@ -286,6 +298,11 @@ while true; do
     --deinterlace)
       DEINTERLACE=1
       shift
+      ;;
+    --use-bitrate)
+      CONSTANT_BITRATE=$2
+      echo "Using Constant Bitrate (Quality Presets will be ignored)"
+      shift 2
       ;;
     # Default cases / end of options
     --)
