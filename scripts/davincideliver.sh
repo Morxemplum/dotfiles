@@ -49,6 +49,14 @@ function list_help_info() {
   echo "                           tad more effective than H265. Is limited to more recent"
   echo "                           hardware, but has better software support." 
   echo ""
+  echo "Extras:"
+  echo "    Most of the flags above should take care of most use cases. These are flags that"
+  echo "    can help handle certain edge cases should they be needed. However, it is highly"
+  echo "    recommended that you *do not* use these flags unless absolutely necessary."
+  echo ""
+  echo "    --deinterlace          Enables yadif, a library that will help remove interlacing"
+  echo "                           from videos. Will slow down encoding, so only use it if you"
+  echo "                           have renders with interlacing."
   echo "Requires ffmpeg for usage."
 }
 
@@ -61,6 +69,8 @@ QUALITY=3
 OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
 OUTPUT_CODEC="h264"
+
+DEINTERLACE=0
 
 # get_hardware_flags()
 # Takes a look at the given hardware acceleration and sets the appropriate flags
@@ -109,12 +119,12 @@ function get_video_codec() {
     codec="${codec}_vaapi"
   elif (( HARDWARE_ACC == 3 )); then
     codec="${codec}_vulkan"
-    if [[ $OUTPUT_CODEC == "hevc" ]];
+    if [[ $OUTPUT_CODEC == "hevc" ]]; then
       echo "   ERROR: hevc_vulkan is currently broken at the moment. Please revert back to h264 until it is fixed."
       exit 1
-    elif [[ $OUTPUT_CODEC == "av1" ]];
+    elif [[ $OUTPUT_CODEC == "av1" ]]; then
       echo "   WARNING: AV1 on Vulkan acceleration is *highly* experimental. There is a high chance it will not transcode (properly) as there's no official specification."
-    end
+    fi
   fi
 }
 
@@ -161,13 +171,19 @@ function calculate_video_quality() {
 function get_format_flags() {
   # +cgop (closed group of pictures): This changes from open gop to closed gop. Websites like YouTube prefer this method
   format_flags="-flags +cgop"
+  if (( DEINTERLACE == 1 )); then
+    # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
+    format_flags="${format_flags} -vf yadif"
+  fi
   if (( HARDWARE_ACC == 3 )); then
     # When using Vulkan hardware acceleration, you must use the vulkan pixel format, as it is not compatible with YUV.
     # In addition, a couple other flags are needed for vulkan acceleration, possibly reducing compatibility
-    format_flags="${format_flags} -vf yadif,format=nv12,hwupload -pix_fmt vulkan"
+    if (( DEINTERLACE == 1 )); then
+      format_flags="${format_flags},format=nv12,hwupload -pix_fmt vulkan"
+    else
+      format_flags="${format_flags} -vf format=nv12,hwupload -pix_fmt vulkan"
+    fi
   else
-    # yadif (yet another deinterlacing format): Removes interlacing artifacts present in the video
-    format_flags="${format_flags} -vf yadif"
     # DNxHR HQ only goes up to 4:2:2 subsampling. However, NVENC will not accept yuv422. So no subsampling is done instead.
     chroma="444" 
     if (( QUALITY >= 3 )); then
@@ -264,6 +280,11 @@ while true; do
       ;;
     --av1)
       OUTPUT_CODEC="av1"
+      shift
+      ;;
+    # Extras
+    --deinterlace)
+      DEINTERLACE=1
       shift
       ;;
     # Default cases / end of options
