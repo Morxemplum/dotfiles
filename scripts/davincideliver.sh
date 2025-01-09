@@ -16,6 +16,7 @@
 #              - Deinterlacing is optional, which can improve encoding speeds.
 #              - Incorporates quality presets for quick and easy tuning.
 #              - Or you can also use a constant bitrate (not recommended)
+#              - You can opt out of AAC transcoding and preserve exported audio
 
 function list_help_info() {
   echo "Usage: davincideliver.sh [options] input_render"
@@ -32,6 +33,9 @@ function list_help_info() {
   echo "    --overwrite  [yes|ask] Allows media to be retranscoded and overwrite previous copies."
   echo "                           yes will overwrite media automatically, ask will ask the user"
   echo "                           to overwrite for each existing transcode found."
+  echo "    --preserve-audio       Disables audio transcoding to AAC, keeping the exported audio"
+  echo "                           in the deliverable. Useful if you're really trying to lower"
+  echo "                           file size or shipping with (near) lossless audio."
   echo ""
   echo "Hardware Acceleration:"
   echo "    By default, this script will use software encoding to ensure the best compatibility."
@@ -80,14 +84,15 @@ function list_help_info() {
 }
 
 SHORT_ARGS="hoq"
-LONG_ARGS=help,output,quality,overwrite,nvidia,vaapi,vulkan,hevc,av1,deinterlace,use-bitrate
+LONG_ARGS=help,output,quality,overwrite,preserve-audio,nvidia,vaapi,vulkan,hevc,av1,deinterlace,use-bitrate
 PARSED=`getopt --options $SHORT_ARGS --longoptions $LONG_ARGS --name "$0" -- "$@"`
 
-OUTPUT_DEST=""
-QUALITY=3
-OVERWRITE=0 # 0 False; 1 True; 2 Ask
 HARDWARE_ACC=0 
 OUTPUT_CODEC="h264"
+OUTPUT_DEST=""
+OVERWRITE=0 # 0 False; 1 True; 2 Ask
+PRESERVE_AUDIO=0
+QUALITY=3
 
 DEINTERLACE=0
 # Any non-zero value means constant bitrate will be used. Quality will be ignored
@@ -284,6 +289,10 @@ while true; do
       fi
       shift 2
       ;;
+    --preserve-audio)
+      PRESERVE_AUDIO=1
+      shift
+      ;;
     # Hardware Acceleration
     --nvidia)
       HARDWARE_ACC=1
@@ -357,6 +366,10 @@ get_video_codec
 
 video_quality_flags="-bf 2"
 audio_flags="-c:a aac -r:a 48000"
+if (( PRESERVE_AUDIO == 1 )); then
+  echo "AAC Transcoding Disabled"
+  audio_flags="-c:a copy"
+fi
 
 # Calculate Quantization values. They vary depending on the codec, and also the specific implementations
 quantization=0
