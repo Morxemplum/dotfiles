@@ -5,7 +5,17 @@
 # Depends on: ffmpeg
 #
 # Description: This is a shell script that takes exported DaVinci Resolve
-#              renders and transcodes them into a deliverable video format.              
+#              renders and transcodes them into a deliverable video format.
+#
+#              This script makes several major improvements over the original:
+#              - Allows for easier switching between various methods of
+#                hardware acceleration
+#              - Supports more and newer hardware acceleration methods, such
+#                as VAAPI and the experimental Vulkan acceleration
+#              - Allows you to deliver with H.265 and AV1 codecs.
+#              - Deinterlacing is optional, which can improve encoding speeds.
+#              - Incorporates quality presets for quick and easy tuning.
+#              - Or you can also use a constant bitrate (not recommended)
 
 function list_help_info() {
   echo "Usage: davincideliver.sh [options] input_render"
@@ -17,7 +27,8 @@ function list_help_info() {
   echo "                           the same folder as their original counterpart."
   echo "    -q | --quality  [0-10] Allows for you to easily tune the quality of the deliverable"
   echo "                           using calculated presets. A higher value will reduce quality"
-  echo "                           for a lower file size. 0 will be visually lossless"
+  echo "                           for a lower file size. 0 will be visually lossless."
+  echo "                           Default quality preset is 3."
   echo "    --overwrite  [yes|ask] Allows media to be retranscoded and overwrite previous copies."
   echo "                           yes will overwrite media automatically, ask will ask the user"
   echo "                           to overwrite for each existing transcode found."
@@ -38,15 +49,15 @@ function list_help_info() {
   echo "    fairly recent GPU to achieve."
   echo ""
   echo "Video Codecs:"
-  echo "    By default, this script will use h264, as it's less computationally intensive and"
+  echo "    By default, this script uses H.264, as it's less computationally intensive and"
   echo "    the most compatible format across the web. But it does leave a bigger file size,"
   echo "    hence will also use more bandwidth. Below are options of more advanced codecs that"
   echo "    can lead to a smaller file size without losing quality."
   echo ""
-  echo "    --hevc                 Uses the H265 video codec. Twice as effective as H264."
+  echo "    --hevc                 Uses the H.265 video codec. Twice as effective as H.264."
   echo "                           Has broader hardware support, but limited software support."
   echo "    --av1                  Uses the AV1 video codec. About twice as effective, and a"
-  echo "                           tad more effective than H265. Is limited to more recent"
+  echo "                           tad more effective than H.265. Is limited to more recent"
   echo "                           hardware, but has better software support." 
   echo ""
   echo "Extras:"
@@ -64,6 +75,7 @@ function list_help_info() {
   echo "                           constant quality. It is imprecise and doesn't net you a lot"
   echo "                           of savings."
   echo "                           (Using this option will ignore the quality presets flag)"
+  echo ""
   echo "Requires ffmpeg for usage."
 }
 
@@ -344,7 +356,7 @@ codec="libx264"
 get_video_codec
 
 video_quality_flags="-bf 2"
-audio_flags="-codec:a aac -b:a 384k -r:a 48000"
+audio_flags="-c:a aac -r:a 48000"
 
 # Calculate Quantization values. They vary depending on the codec, and also the specific implementations
 quantization=0
