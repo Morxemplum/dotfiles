@@ -17,9 +17,12 @@
 #              - Incorporates quality presets for quick and easy tuning.
 #              - Or you can also use a constant bitrate (not recommended)
 #              - You can opt out of AAC transcoding and preserve exported audio
+#              - You can turn multiple exports into deliverables
 
 function list_help_info() {
   echo "Usage: davincideliver.sh [options] input_render"
+  echo "       davincideliver.sh [options] input_render_one input_render_two ..."
+  echo "       <Line-separated absolute paths to file names> | davincideliver.sh [options]"
   echo ""
   echo "General Options:"
   echo "    -h | --help            Lists the usage and flags that can be used."
@@ -253,8 +256,7 @@ function find_existing_output() {
   if [[ -f $1 ]]; then
     if (( OVERWRITE == 0 )); then
       echo "    Transcoded output already exists. Skipping."
-      # TODO: When implementing batch conversion, change this to just end this conversion, instead of terminating the script
-      exit 0
+      failed=1
     elif (( OVERWRITE == 1 )); then
       echo "    Transcoded output already exists. Overwriting."
       overwrite_str="-y"
@@ -336,8 +338,26 @@ while true; do
   esac
 done
 
-# Check if an input file is provided
-if [[ $# -eq 0 ]]; then
+files=()
+# Accept piped input. Files are delimited by lines.
+if [ -p /dev/stdin ]; then
+  iter=0
+  while read line; do
+    files[$iter]="${line}"
+    iter=$((iter+1))
+  done
+  if [[ $# -gt 0 ]]; then
+    echo "ERROR: You have both piped input and file arguments, which are mutually exclusive. Please shift one into the other and try again."
+    exit 1
+  fi
+# Alternative is to accept arguments
+elif [[ $# -gt 0 ]]; then
+  iter=0
+  for var in "$@"; do
+    files[$iter]="${var}"
+    iter=$((iter+1))
+  done
+else
   list_help_info
   exit 0
 fi
@@ -385,16 +405,29 @@ fi
 
 get_format_flags
 
+failed=0
 # BEGIN VIDEO CONVERSION
-echo $1
+for file in "${files[@]}"; do
+  echo "$file"
+  # TODO: Incorporate more sanity checks on the files. We want only video files (more specifically exports)
+  if [[ ! -f "$file" ]]; then
+    echo "    File \""$file"\" not found. Skipping."
+    continue
+  fi
  
-output_file=""
-format_file_name "$1"
+  output_file=""
+  format_file_name "$file"
 
-output_file="${output_file}.$file_container"
-overwrite_str=""
-find_existing_output "$output_file"
+  output_file="${output_file}.$file_container"
+  overwrite_str=""
+  find_existing_output "$output_file"
+  if (( failed == 1 )); then
+    failed=0
+    continue
+  fi
 
-ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $hw_accel_flags -i "$1" $format_flags -codec:v $codec $video_quality_flags $audio_flags "$output_file"
+  ffmpeg $overwrite_str -hide_banner -loglevel warning -stats $hw_accel_flags -i "$file" $format_flags -codec:v $codec $video_quality_flags $audio_flags "$output_file"
+  echo ""
+done
  
-echo "Conversion completed. Output file: $output_file"
+echo "Conversion completed!"

@@ -332,7 +332,7 @@ fi
 
 for file in "${files[@]}"; do
   echo "$file"
-  # TODO: Incoporate more sanity checks on the files. We want only video files!
+  # TODO: Incorporate more sanity checks on the files. We want only video files!
   if [[ ! -f "$file" ]]; then
     echo "    File \""$file"\" not found. Skipping."
     continue
