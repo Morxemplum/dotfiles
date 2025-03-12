@@ -33,6 +33,7 @@ in
 		lshw
 		pstree
 		python3Full # This is solely for the purpose of running scripts.
+		scour
 		
 		# Compatibility tools
 		appimage-run
