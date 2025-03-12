@@ -23,5 +23,6 @@
 	services.displayManager.ly.enable = true;
 	# Enable the GNOME Desktop Environment.
 	services.xserver.desktopManager.gnome.enable = true;
+	# Enable the Hyprland Window Manager.
 	programs.hyprland.enable = true;
 }
