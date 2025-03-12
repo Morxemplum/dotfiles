@@ -26,6 +26,7 @@ in
 		legcord
 	 	
 	 	# Creative
+		audacity
 	 	darktable
 	 	davinci-resolve
 	 	gimp
@@ -64,7 +65,7 @@ in
 		bopimo = {
 			name = "Bopimo! Client";
 			comment = "Play Bopimo! multiplayer or singleplayer";
-			exec = "/home/morxemplum/.local/share/Bopimo!/Client/bopimo_client.x86_64";
+			exec = "${settings.HOME_DIR}/.local/share/Bopimo!/Client/bopimo_client.x86_64";
 			categories = [ "Game" ];
 			icon = "bopimo";
 		};
@@ -83,14 +84,6 @@ in
 					exec = "appimage-run ${settings.HOME_DIR}/.local/share/Bopimo!/Launcher/bopimo-launcher.AppImage --no-sandbox --uninstall-prompt";
 				};
 			};
-		};
-		# Cider. This is the paid version that uses an AppImage to run. So we must manually create a desktop entry for it
-		cider = {
-			name = "Cider";
-			exec = "appimage-run ${settings.STANDALONE_APPS_DIR}/Cider.AppImage";
-			terminal = false;
-			categories = [ "AudioVideo" "Audio" "Player" "Network" "Music" ];
-			icon = "${settings.STANDALONE_APPS_ICONS}/cider.png";
 		};
 		# Discord
 		legcord = {
