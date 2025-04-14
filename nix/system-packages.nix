@@ -39,6 +39,7 @@ in
 		# Compatibility tools
 		appimage-run
 		distrobox
+		wine-staging
 
 		# Packages I Maintain
 		staging.mcpelauncher-client
