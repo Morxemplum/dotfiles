@@ -4,6 +4,7 @@ let
   unstable = import <nixos-unstable> { 
     config.allowUnfree = true;
   };
+  staging = import /home/morxemplum/Gits/nixpkgs {};
 in
 {
   # Allow unfree packages
@@ -40,8 +41,8 @@ in
 		distrobox
 
 		# Packages I Maintain
-		unstable.mcpelauncher-client
-		unstable.mcpelauncher-ui-qt
+		staging.mcpelauncher-client
+		staging.mcpelauncher-ui-qt
 	];
 
   # Enable nix command and flakes for searching purposes
