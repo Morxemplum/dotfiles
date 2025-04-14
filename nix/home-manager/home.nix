@@ -65,7 +65,7 @@ in
 		bopimo = {
 			name = "Bopimo! Client";
 			comment = "Play Bopimo! multiplayer or singleplayer";
-			exec = "${settings.HOME_DIR}/.local/share/Bopimo!/Client/bopimo_client.x86_64";
+			exec = "steam-run ${settings.HOME_DIR}/.local/share/Bopimo!/Client/bopimo_client.x86_64";
 			categories = [ "Game" ];
 			icon = "bopimo";
 		};
