@@ -54,6 +54,7 @@ in
 		pwvucontrol
 	 	thunderbird
 		xorg.xeyes
+		xorg.xcursorgen
 
 		# VR
 		sidequest
