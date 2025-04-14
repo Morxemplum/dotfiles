@@ -28,7 +28,6 @@ in
 	 	# Creative
 		audacity
 	 	darktable
-	 	davinci-resolve
 	 	gimp
 		inkscape
 	 	obs-studio
