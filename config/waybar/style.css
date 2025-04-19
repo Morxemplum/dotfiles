@@ -1,12 +1,12 @@
 * {
 	min-height: 0;
+    /* `otf-font-awesome` is required to be installed for icons */
+    font-family: Roboto, Helvetica, Arial, 'Font Awesome 6 Free';
 }
 
 body {
     border: none;
     border-radius: 0px;
-    /* `otf-font-awesome` is required to be installed for icons */
-    font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
 window#waybar {
