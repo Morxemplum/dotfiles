@@ -6,7 +6,7 @@
 
 body {
     border: none;
-    border-radius: 0px;
+    border-radius: 0px;   
 }
 
 window#waybar {
@@ -39,6 +39,7 @@ window#waybar.hidden {
     background: #878787;
     color: #000;
     margin: 10px 5px;
+    min-width: 15px;
     padding: 0px 0px;
     border-radius: 10px;
     font-size: 10px;
