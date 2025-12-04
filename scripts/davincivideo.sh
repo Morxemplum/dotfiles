@@ -163,7 +163,7 @@ function find_existing_output() {
 function audio_codec_check() {
   # DV4L doesn't support AAC or Ogg Vorbis, regardless of Free or Studio.
   # FFmpeg doesn't support Opus in mov.
-  if [[ ($1 == "aac" || $1 == "vorbis") || ($1 == "opus" && $2 == "mov") ]]; then
+  if [[ ($1 == "aac" || $1 == "vorbis" || $1 == "opus") ]]; then
     audio_transcode=1
   fi
 }
