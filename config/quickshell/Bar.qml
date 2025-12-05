@@ -76,6 +76,12 @@ Scope {
                 }
                 spacing: root.horizontal_padding
                 height: parent.height
+
+                Widgets.SystemUsage {
+                    width: 80
+                    height: parent.height - root.vertical_padding * 2
+                    text_color: "#ffffff"
+                }
             }
 
             // Right Group of Widgets
