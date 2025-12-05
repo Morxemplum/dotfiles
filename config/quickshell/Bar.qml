@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 import Quickshell
-import Quickshell.Io
 
 import QtQuick
 import QtQuick.Effects
@@ -9,6 +8,7 @@ import "./Widgets" as Widgets
 
 Scope {
     id: root
+    property real horizontal_padding: 5
     property real vertical_padding: 5
 
     Variants {
@@ -16,7 +16,7 @@ Scope {
         model: Quickshell.screens;
 
         PanelWindow {
-            id: shellbar
+            id: shell_bar
 
             required property var modelData
 
@@ -32,7 +32,7 @@ Scope {
 
             // This item is meant to redraw a mask of the current wallpaper
             Item {
-                id: mybar
+                id: my_bar
                 anchors.fill: parent
                 visible: false // We are applying post-processing, so let's not render the image twice
 
@@ -42,42 +42,60 @@ Scope {
                         left: parent.left
                         right: parent.right
                     }
-                    height: shellbar.screen.height
+                    height: shell_bar.screen.height
                     source: "./themes/wallpapers/bees_on_yellow.jpg"
                 }
             }
             // Our upcoming blur will introduce transparency, this rectangle will help cancel out the alpha
             Rectangle {
-                id: backpanel
                 anchors.fill: parent
                 color: '#454545'
             }
             // Blur the image above
             MultiEffect {
-                source: mybar
+                source: my_bar
                 anchors.fill: parent
                 blurEnabled: true
                 blur: 1
                 blurMultiplier: 2
             }
             Rectangle {
-                id: backdrop
                 anchors.fill: parent
                 color: '#4f480c'
                 opacity: 0.5
             }
 
-            // Time
-            Widgets.Clock {
-                width: 100
-                height: parent.height - root.vertical_padding * 2
+            // Left Group of Widgets
+            Row {
+                id: left_group
                 anchors {
                     top: parent.top
                     topMargin: root.vertical_padding
-                    horizontalCenter: parent.horizontalCenter
-                    horizontalCenterOffset: -this.width / 2
+                    left: parent.left
+                    leftMargin: root.horizontal_padding
                 }
-                color: '#ffffff'
+                spacing: root.horizontal_padding
+                height: parent.height
+            }
+
+            // Right Group of Widgets
+            Row {
+                id: right_group
+                anchors {
+                    top: parent.top
+                    topMargin: root.vertical_padding
+                    right: parent.right
+                    rightMargin: root.horizontal_padding
+                }
+                spacing: root.horizontal_padding
+                height: parent.height
+                layoutDirection: Qt.RightToLeft
+
+                Widgets.Clock {
+                    width: 100
+                    height: parent.height - root.vertical_padding * 2
+                    text_color: '#ffffff'
+                }
             }
         }
     }

@@ -6,12 +6,12 @@ import ".."
 
 Item {
     id: root
-    property color color
+    property color text_color
 
     Rectangle {
         property bool hover: false
 
-        color: "#000"
+        color: '#000000'
 
         width: parent.width
         height: parent.height
@@ -24,7 +24,7 @@ Item {
             }
             // When hovering the cursor over the element, display the date
             text: parent.hover ? Time.date : Time.time
-            color: root.color
+            color: root.text_color
             font {
                 bold: true
                 family: "AdwaitaSans"
