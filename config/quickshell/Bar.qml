@@ -84,6 +84,23 @@ Scope {
                 }
             }
 
+            Row {
+                id: center_group
+                anchors {
+                    top: parent.top
+                    topMargin: root.vertical_padding
+                    horizontalCenter: parent.horizontalCenter
+                }
+                spacing: root.horizontal_padding
+                height: parent.height
+
+                Widgets.HyprlandWorkspaces {
+                    screen: shell_bar.screen
+                    width: childrenRect.width // The width of this widget depends on number of workspaces
+                    height: parent.height - root.vertical_padding * 2
+                }
+            }
+
             // Right Group of Widgets
             Row {
                 id: right_group
