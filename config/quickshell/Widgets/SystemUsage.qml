@@ -39,7 +39,7 @@ Item {
                 font {
                     bold: true
                     family: "NotoSansMono"
-                    pointSize: parent.height / 3
+                    pointSize: 10
                 }
             }
         }
@@ -67,7 +67,7 @@ Item {
                 font {
                     bold: true
                     family: "NotoSansMono"
-                    pointSize: parent.height / 3
+                    pointSize: 10
                 }
             }
         }
@@ -95,7 +95,7 @@ Item {
                 font {
                     bold: true
                     family: "NotoSansMono"
-                    pointSize: parent.height / 3
+                    pointSize: 10
                 }
             }
         }

@@ -27,7 +27,7 @@ Item {
             font {
                 bold: true
                 family: "AdwaitaSans"
-                pointSize: parent.height / 3
+                pointSize: 10
             }
         }
         // Add hover behavior
