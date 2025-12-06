@@ -8,6 +8,7 @@ import "./Widgets" as Widgets
 
 Scope {
     id: root
+    property real barHeight: 40
     property real horizontal_padding: 5
     property real vertical_padding: 5
 
@@ -27,7 +28,7 @@ Scope {
                 left: true
                 right: true
             }
-            implicitHeight: 40
+            implicitHeight: root.barHeight
             color: "#00000000"
 
             // This item is meant to redraw a mask of the current wallpaper
@@ -118,6 +119,12 @@ Scope {
                     width: 100
                     height: parent.height - root.vertical_padding * 2
                     text_color: '#ffffff'
+                }
+
+                Widgets.UtilTray {
+                    bar: shell_bar
+                    width: childrenRect.width
+                    height: parent.height - root.vertical_padding * 2
                 }
             }
         }
