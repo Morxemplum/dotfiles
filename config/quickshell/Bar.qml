@@ -79,9 +79,14 @@ Scope {
                 height: parent.height
 
                 Widgets.SystemUsage {
-                    width: 80
+                    width: 280
                     height: parent.height - root.vertical_padding * 2
                     text_color: "#ffffff"
+                }
+
+                Widgets.HyprlandWindow {
+                    width: childrenRect.width
+                    height: parent.height - root.vertical_padding * 2
                 }
             }
 
@@ -133,6 +138,12 @@ Scope {
                     width: childrenRect.width
                     height: parent.height - root.vertical_padding * 2
                 }
+            }
+
+            Loader { id: hyprclientsListener }
+
+            Component.onCompleted: {
+                hyprclientsListener.source = "Hyprclients.qml"
             }
         }
     }
