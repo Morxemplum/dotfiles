@@ -126,6 +126,13 @@ Scope {
                     width: childrenRect.width
                     height: parent.height - root.vertical_padding * 2
                 }
+
+                Widgets.AppTray {
+                    barWindow: shell_bar
+                    barItem: my_bar
+                    width: childrenRect.width
+                    height: parent.height - root.vertical_padding * 2
+                }
             }
         }
     }
