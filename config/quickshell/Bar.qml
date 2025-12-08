@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import Quickshell
+import Quickshell.Hyprland
 
 import QtQuick
 import QtQuick.Effects
@@ -145,6 +146,8 @@ Scope {
             Component.onCompleted: {
                 hyprclientsListener.source = "Hyprclients.qml"
             }
+
+            visible: !(modelData.name == Hyprland.focusedMonitor.name && Hyprclients.activeFullscreen)
         }
     }
 }

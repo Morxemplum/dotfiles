@@ -1,7 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior : Bound
 
-import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
@@ -22,6 +21,21 @@ Item {
                 var title = parsedJSON["initialTitle"]
                 const delimiters = ["—", "-"]
                 var badTitle = false
+
+                // Borderless fullscreen applications under XWayland aren't picked up as fullscreen by Hyprland
+                if (parsedJSON["xwayland"] && parsedJSON["floating"]) {
+                    const monitor = Hyprland.focusedMonitor
+                    if (monitor != null) {
+                        // X11 doesn't support fractional scaling, so we have to calculate the scale factor to the truncated integer scale
+                        const scaleFactor = monitor.scale / Math.floor(monitor.scale)
+                        const scaledWidth = monitor.width / scaleFactor
+                        const scaledHeight = monitor.height / scaleFactor
+
+                        root.activeFullscreen = (parsedJSON["size"][0] == scaledWidth && parsedJSON["size"][1] == scaledHeight)
+                    }
+                } else {
+                    root.activeFullscreen = parsedJSON["fullscreen"]
+                }
 
                 // If the title isn't properly initialized, then refer to the current title
                 if (title.trim() == "") {
