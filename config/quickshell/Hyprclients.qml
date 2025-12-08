@@ -10,6 +10,7 @@ Item {
     id: root
     property string focusedProgram
     property string focusedWindow
+    property bool activeFullscreen
 
     Process {
         id: activeWindow
@@ -18,13 +19,17 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const parsedJSON = JSON.parse(this.text)
-                const initialTitle = parsedJSON["initialTitle"]
+                var title = parsedJSON["initialTitle"]
                 const delimiters = ["—", "-"]
                 var badTitle = false
 
+                // If the title isn't properly initialized, then refer to the current title
+                if (title.trim() == "") {
+                    title = parsedJSON["title"]
+                }
                 // Unfortunately initialTitle is not always perfect. So we'll find common delimiters and identify bad titles
                 for (const delimiter of delimiters) {
-                    if (initialTitle.includes(delimiter)) {
+                    if (title.includes(delimiter)) {
                         badTitle = true
                         break;
                     }
@@ -54,7 +59,7 @@ Item {
                     root.focusedProgram = programClass
                     
                 } else {
-                    root.focusedProgram = initialTitle
+                    root.focusedProgram = title
                 }
             }
         }
@@ -73,6 +78,7 @@ Item {
                     
                     root.focusedWindow = splitData[1]
                     activeWindow.running = true
+                    break;
             }
         }
     }
