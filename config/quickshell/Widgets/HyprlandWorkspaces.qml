@@ -51,7 +51,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: !parent.isActive
-                    onClicked: Hyprland.dispatch("workspace " + (parent.index + 1))
+                    onClicked: Hyprland.dispatch("workspace " + parent.workspace.id)
 
                     onEntered: {
                         parent.hover = true
