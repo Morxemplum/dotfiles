@@ -63,7 +63,6 @@ Item {
             // We may have to actually try and create our own applet as an ideal solution. networkmanager_dmenu would be the temporary workaround
         }
         
-        // TODO: Replace this with an IconImage of an SVG Clipboard icon
         Rectangle {
             property bool hover: false
 
@@ -73,7 +72,16 @@ Item {
 
             width: this.height
             height: parent.height
-            color: '#ff9500'
+            color: '#00000000'
+
+            Image {
+                anchors {
+                    centerIn: parent
+                }
+                width: 20
+                height: 20
+                source: "../themes/svg/clipboard.svg"
+            }
 
             MouseArea {
                 anchors.fill: parent
