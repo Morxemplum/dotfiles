@@ -11,92 +11,107 @@ Item {
     property color danger: '#ff8000'
     property real warningThreshold: 50
     property real dangerThreshold: 80
+    property real tempWarningThreshold: 75
+    property real tempDangerThreshold: 95
+
+    Rectangle {
+        id: backdrop
+        property bool hover: false
+
+        anchors {
+            left: parent.left
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
+
+        color: '#000000'
+        width: container.width + 20
+        height: parent.height
+        radius: 10
+    }
 
     Row {
-        anchors.fill: parent
+        id: container
         spacing: 5
 
-        Rectangle {
-            property bool hover: false
+        anchors {
+            centerIn: backdrop
+        }
 
-            color: '#000000'
+        Image {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 20
+            height: 20
+            source: "../themes/svg/cpu.svg"
+        }
 
-            width: 80
-            height: parent.height
-            radius: 10
-
-            Text {
-                anchors {
-                    left: parent.left
-                    leftMargin: 5
-                    verticalCenter: parent.verticalCenter
-                }
-                // When hovering the cursor over the element, display the date
-                text: "CPU: " + SystemMonitor.cpuUsage + "%"
-                color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
-                        (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
-                        root.text_color
-                font {
-                    bold: true
-                    family: "NotoSansMono"
-                    pointSize: 10
-                }
+        Text {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 30
+            text: SystemMonitor.cpuUsage + "%"
+            color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
+                    (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
+                    root.text_color
+            font {
+                bold: true
+                family: "NotoSansMono"
+                pointSize: 10
             }
         }
 
-        Rectangle {
-            property bool hover: false
+        Image {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 20
+            height: 20
+            source: "../themes/svg/ram.svg"
+        }
 
-            color: '#000000'
-
-            width: 80
-            height: parent.height
-            radius: 10
-
-            Text {
-                anchors {
-                    left: parent.left
-                    leftMargin: 5
-                    verticalCenter: parent.verticalCenter
-                }
-                // When hovering the cursor over the element, display the date
-                text: "Mem: " + SystemMonitor.memUsagePercentage + "%"
-                color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
-                        (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
-                        root.text_color
-                font {
-                    bold: true
-                    family: "NotoSansMono"
-                    pointSize: 10
-                }
+        Text {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 30
+            text: SystemMonitor.memUsagePercentage + "%"
+            color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
+                    (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
+                    root.text_color
+            font {
+                bold: true
+                family: "NotoSansMono"
+                pointSize: 10
             }
         }
 
-        Rectangle {
-            property bool hover: false
+        Image {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 20
+            height: 20
+            source: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? "../themes/svg/temperature-danger.svg" : 
+                    (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? "../themes/svg/temperature-high.svg" : 
+                    "../themes/svg/temperature-normal.svg"
+        }
 
-            color: '#000000'
-
-            width: 110
-            height: parent.height
-            radius: 10
-
-            Text {
-                anchors {
-                    left: parent.left
-                    leftMargin: 5
-                    verticalCenter: parent.verticalCenter
-                }
-                // When hovering the cursor over the element, display the date
-                text: "Temp: " + SystemMonitor.cpuTempStr
-                color: (SystemMonitor.cpuTemp >= root.dangerThreshold) ? root.danger : 
-                        (SystemMonitor.cpuTemp >= root.warningThreshold) ? root.warning : 
-                        root.text_color
-                font {
-                    bold: true
-                    family: "NotoSansMono"
-                    pointSize: 10
-                }
+        Text {
+            anchors {
+                verticalCenter: parent.verticalCenter
+            }
+            width: 50
+            text: SystemMonitor.cpuTempStr
+            color: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? root.danger : 
+                    (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? root.warning : 
+                    root.text_color
+            font {
+                bold: true
+                family: "NotoSansMono"
+                pointSize: 10
             }
         }
     }

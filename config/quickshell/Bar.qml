@@ -80,7 +80,7 @@ Scope {
                 height: parent.height
 
                 Widgets.SystemUsage {
-                    width: 280
+                    width: childrenRect.width + root.horizontal_padding
                     height: parent.height - root.vertical_padding * 2
                     text_color: "#ffffff"
                 }
