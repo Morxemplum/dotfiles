@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="cpu.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#323232"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showguides="true"
+     inkscape:zoom="10.84967"
+     inkscape:cx="-0.50692788"
+     inkscape:cy="20.231031"
+     inkscape:window-width="2516"
+     inkscape:window-height="1356"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="7,25"
+       orientation="1,0"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="25,23.885947"
+       orientation="1,0"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="25,25"
+       orientation="0,-1"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="21.11609,7"
+       orientation="0,-1"
+       id="guide4"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="9.1852775,32"
+       orientation="0,-1"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="16.977597,28"
+       orientation="0,1"
+       id="guide16"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="16.721869,4"
+       orientation="0,1"
+       id="guide17"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="28,32.553971"
+       orientation="-1,0"
+       id="guide18"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="4,15.662296"
+       orientation="-1,0"
+       id="guide19"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;stroke-width:3.76388"
+       id="rect1"
+       width="21"
+       height="21"
+       x="5.5"
+       y="5.5" />
+    <g
+       id="g5"
+       inkscape:label="pins"
+       transform="scale(1,0.72727273)">
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect4"
+         width="3"
+         height="5.5"
+         x="5.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin1" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect4-2"
+         width="3"
+         height="5.5"
+         x="11.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin2" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect4-2-0"
+         width="3"
+         height="5.5"
+         x="17.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin3" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect4-2-0-6"
+         width="3"
+         height="5.5"
+         x="23.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin4" />
+    </g>
+    <g
+       id="g8"
+       inkscape:label="pins"
+       transform="matrix(1,0,0,0.72727273,0,28)">
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect5"
+         width="3"
+         height="5.5"
+         x="5.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin1" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect6"
+         width="3"
+         height="5.5"
+         x="11.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin2" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect7"
+         width="3"
+         height="5.5"
+         x="17.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin3" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect8"
+         width="3"
+         height="5.5"
+         x="23.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin4" />
+    </g>
+    <g
+       id="g12"
+       inkscape:label="pins"
+       transform="matrix(0,1,-0.72727273,0,32,0)">
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect9"
+         width="3"
+         height="5.5"
+         x="5.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin1" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect10"
+         width="3"
+         height="5.5"
+         x="11.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin2" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect11"
+         width="3"
+         height="5.5"
+         x="17.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin3" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect12"
+         width="3"
+         height="5.5"
+         x="23.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin4" />
+    </g>
+    <g
+       id="g16"
+       inkscape:label="pins"
+       transform="matrix(0,1,-0.72727273,0,4,0)">
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect13"
+         width="3"
+         height="5.5"
+         x="5.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin1" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect14"
+         width="3"
+         height="5.5"
+         x="11.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin2" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect15"
+         width="3"
+         height="5.5"
+         x="17.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin3" />
+      <rect
+         style="fill:#ffffff;stroke-width:4.69042"
+         id="rect16"
+         width="3"
+         height="5.5"
+         x="23.5"
+         y="-6.6613381e-16"
+         inkscape:label="pin4" />
+    </g>
+  </g>
+</svg>
