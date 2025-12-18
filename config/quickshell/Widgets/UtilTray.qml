@@ -18,7 +18,7 @@ Item {
         color: '#000000'
 
         width: container.width + 20
-        height: parent.height 
+        height: parent.height
         radius: 10
     }
 
@@ -64,14 +64,27 @@ Item {
 
         // TODO: Make a notification widget to replace dunst
 
-        // TODO: Replace this with an IconImage of an SVG icon that dynamically changes based on connection status and type of connection
         Rectangle {
             id: networkStatus
             visible: root.networkCtl
 
             width: this.height
             height: parent.height
-            color: '#00ffb3'
+            color: '#00000000'
+
+            Image {
+                anchors {
+                    centerIn: parent
+                }
+                width: 20
+                height: 20
+                source: (Networking.status == Enums.ConnectionStatus.Ethernet) ? "../themes/svg/ethernet-connection.svg" :
+                        (Networking.status == Enums.ConnectionStatus.Limited) ? "../themes/svg/ethernet-limited-connection.svg" :
+                        (Networking.status == Enums.ConnectionStatus.Wireless) ? "../themes/svg/wifi-" + Math.min(Math.trunc(Networking.wifiStrength / 25), 3) + ".svg" :
+                        // TODO: Probably make a separate icon to indicate a pending connection
+                        (Networking.status == Enums.ConnectionStatus.Pending) ? "../themes/svg/ethernet-limited-connection.svg" :
+                        "../themes/svg/no-connection.svg"
+            }
 
             // Quickshell doesn't have a built-in method of getting network status, so we'll need to figure something out
             // We may have to actually try and create our own applet as an ideal solution. networkmanager_dmenu would be the temporary workaround
