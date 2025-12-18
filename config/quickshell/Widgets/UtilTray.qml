@@ -4,6 +4,8 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
+import ".."
+
 Item {
     id: root
     required property var bar
@@ -28,7 +30,6 @@ Item {
         }
         height: parent.height 
 
-        // TODO: Replace this with an IconImage of an SVG sound icon (I'm ditching font-based icons completely)
         Rectangle {
             id: soundTray
             anchors.verticalCenter: parent.verticalCenter
@@ -36,7 +37,20 @@ Item {
 
             width: this.height
             height: parent.height
-            color: "#ffffff"
+            color: '#00000000'
+
+            Image {
+                anchors {
+                    centerIn: parent
+                }
+                width: 20
+                height: 20
+                // FIXME: Find a more efficient way to write this?
+                source: (Audio.volume == 0) ? "../themes/svg/no-audio.svg" :
+                        (Audio.volume < (1 / 3)) ? "../themes/svg/sound-1.svg" :
+                        (Audio.volume < (2 / 3)) ? "../themes/svg/sound-2.svg" :
+                        "../themes/svg/sound-3.svg"
+            }
 
             MouseArea {
                 anchors.fill: parent

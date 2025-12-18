@@ -142,9 +142,11 @@ Scope {
             }
 
             Loader { id: hyprclientsListener }
+            Loader { id: audioListener }
 
             Component.onCompleted: {
                 hyprclientsListener.source = "Hyprclients.qml"
+                audioListener.source = "Audio.qml"
             }
 
             visible: !(modelData.name == Hyprland.focusedMonitor.name && Hyprclients.activeFullscreen)
