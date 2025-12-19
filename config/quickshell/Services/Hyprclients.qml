@@ -33,8 +33,11 @@ Item {
 
                         root.activeFullscreen = (parsedJSON["size"][0] == scaledWidth && parsedJSON["size"][1] == scaledHeight)
                     }
+                // This field can be "undefined", so we can't just assign it directly.
+                } else if (parsedJSON["fullscreen"]) {
+                    root.activeFullscreen = true
                 } else {
-                    root.activeFullscreen = parsedJSON["fullscreen"]
+                    root.activeFullscreen = false
                 }
 
                 // If the title isn't properly initialized, then refer to the current title
