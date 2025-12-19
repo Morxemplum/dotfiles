@@ -4,18 +4,23 @@ import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import QtQuick
 
+import ".."
+
 Item {
     id: root
     required property var barWindow
     required property var barItem
 
+    property real appRadius: 5
+    property real appStatusVerticalPadding: 4
+
     Rectangle {
         id: backdrop
-        color: '#000000'
+        color: Config.accentColor
 
-        width: container.width + 20
+        width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height 
-        radius: 10
+        radius: Config.widgetRadius
     }
 
     Row {
@@ -43,16 +48,16 @@ Item {
                     anchors.centerIn: parent
 
                     width: this.height
-                    height: parent.height - 4
-                    radius: 5
+                    height: parent.height - root.appStatusVerticalPadding
+                    radius: root.appRadius
 
-                    color: (parent.appTracker.status) == Status.NeedsAttention ? '#8dff0000' :
+                    color: (parent.appTracker.status) == Status.NeedsAttention ? Config.urgentColor :
                             '#00000000'
                 }
 
                 IconImage {
                     anchors.centerIn: parent
-                    implicitSize: 16
+                    implicitSize: Config.iconSize
                     source: parent.appTracker.icon
                 }
 

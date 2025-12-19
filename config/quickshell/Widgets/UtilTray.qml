@@ -15,11 +15,11 @@ Item {
 
     Rectangle {
         id: backdrop
-        color: '#000000'
+        color: Config.accentColor
 
-        width: container.width + 20
+        width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height
-        radius: 10
+        radius: Config.widgetRadius
     }
 
     Row {
@@ -43,8 +43,8 @@ Item {
                 anchors {
                     centerIn: parent
                 }
-                width: 20
-                height: 20
+                width: Config.iconSize
+                height: Config.iconSize
                 // FIXME: Find a more efficient way to write this?
                 source: (Audio.volume == 0) ? "../themes/svg/no-audio.svg" :
                         (Audio.volume < (1 / 3)) ? "../themes/svg/sound-1.svg" :
@@ -76,8 +76,8 @@ Item {
                 anchors {
                     centerIn: parent
                 }
-                width: 20
-                height: 20
+                width: Config.iconSize
+                height: Config.iconSize
                 source: (Networking.status == Enums.ConnectionStatus.Ethernet) ? "../themes/svg/ethernet-connection.svg" :
                         (Networking.status == Enums.ConnectionStatus.Limited) ? "../themes/svg/ethernet-limited-connection.svg" :
                         (Networking.status == Enums.ConnectionStatus.Wireless) ? "../themes/svg/wifi-" + Math.min(Math.trunc(Networking.wifiStrength / 25), 3) + ".svg" :
@@ -105,8 +105,8 @@ Item {
                 anchors {
                     centerIn: parent
                 }
-                width: 20
-                height: 20
+                width: Config.iconSize
+                height: Config.iconSize
                 source: "../themes/svg/clipboard.svg"
             }
 

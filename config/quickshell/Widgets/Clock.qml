@@ -10,11 +10,11 @@ Item {
     Rectangle {
         property bool hover: false
 
-        color: '#000000'
+        color: Config.accentColor
 
         width: parent.width
         height: parent.height
-        radius: 10
+        radius: Config.widgetRadius
 
         Text {
             anchors {
@@ -26,8 +26,8 @@ Item {
             color: root.text_color
             font {
                 bold: true
-                family: "AdwaitaSans"
-                pointSize: 10
+                family: Config.displayFontFamily
+                pointSize: Config.labelSize
             }
         }
         // Add hover behavior

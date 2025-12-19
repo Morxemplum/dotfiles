@@ -9,29 +9,30 @@ Item {
 
     Rectangle {
         id: backdrop
-        color: '#000000'
+        color: Config.accentColor
 
-        width: currWindow.width + 20
+        width: currWindow.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height 
-        radius: 10
+        radius: Config.widgetRadius
     }
 
     Text {
         id: currWindow
         anchors {
             left: backdrop.left
-            leftMargin: 10
+            leftMargin: Config.widgetRadius
             top: backdrop.top
+            // FIXME: Simplify this calculation. This one likes to be a pain in the ass for some reason
             topMargin: backdrop.height / 2 - this.font.pointSize * 3 / 4
         }
         height: parent.height
-        color: "#fff"
+        color: Config.textColor
         text: Hyprclients.focusedProgram
 
         font {
             bold: true
-            family: "AdwaitaSans"
-            pointSize: 12
+            family: Config.displayFontFamily
+            pointSize: Config.headerLabelSize
         }
     }
 }

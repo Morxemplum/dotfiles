@@ -6,6 +6,9 @@ import ".."
 Item {
     id: root
     property color text_color
+    property real statSpacing: 5
+    property real labelWidth: 30
+    property real tempLabelWidth: 50
 
     property color warning: '#ffff00'
     property color danger: '#ff8000'
@@ -20,19 +23,18 @@ Item {
 
         anchors {
             left: parent.left
-            leftMargin: 5
             verticalCenter: parent.verticalCenter
         }
 
-        color: '#000000'
-        width: container.width + 20
+        color: Config.accentColor
+        width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height
-        radius: 10
+        radius: Config.widgetRadius
     }
 
     Row {
         id: container
-        spacing: 5
+        spacing: root.statSpacing
 
         anchors {
             centerIn: backdrop
@@ -42,8 +44,8 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 20
-            height: 20
+            width: this.height
+            height: Config.iconSize
             source: "../themes/svg/cpu.svg"
         }
 
@@ -51,15 +53,15 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 30
+            width: root.labelWidth
             text: SystemMonitor.cpuUsage + "%"
             color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
                     (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
                     root.text_color
             font {
                 bold: true
-                family: "NotoSansMono"
-                pointSize: 10
+                family: Config.monoFontFamily
+                pointSize: Config.labelSize
             }
         }
 
@@ -67,8 +69,8 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 20
-            height: 20
+            width: this.height
+            height: Config.iconSize
             source: "../themes/svg/ram.svg"
         }
 
@@ -76,15 +78,16 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 30
+            width: root.labelWidth
+
             text: SystemMonitor.memUsagePercentage + "%"
             color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
                     (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
                     root.text_color
             font {
                 bold: true
-                family: "NotoSansMono"
-                pointSize: 10
+                family: Config.monoFontFamily
+                pointSize: Config.labelSize
             }
         }
 
@@ -92,8 +95,8 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 20
-            height: 20
+            width: this.height
+            height: Config.iconSize
             source: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? "../themes/svg/temperature-danger.svg" : 
                     (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? "../themes/svg/temperature-high.svg" : 
                     "../themes/svg/temperature-normal.svg"
@@ -103,15 +106,15 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
-            width: 50
+            width: root.tempLabelWidth
             text: SystemMonitor.cpuTempStr
             color: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? root.danger : 
                     (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? root.warning : 
                     root.text_color
             font {
                 bold: true
-                family: "NotoSansMono"
-                pointSize: 10
+                family: Config.monoFontFamily
+                pointSize: Config.labelSize
             }
         }
     }

@@ -4,23 +4,29 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 
+import ".."
+
 Item {
     id: root
     required property ShellScreen screen
     property real activeSize: 15
     property real passiveSize: 12
+    property real workspaceSpacing: 8
+
+    property color activeColor: "#ffffff"
+    property color inactiveColor: "#3e3e3e"
 
     Rectangle {
         id: backdrop
-        color: '#000000'
+        color: Config.accentColor
 
-        width: container.width + 30
+        width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height 
-        radius: 10
+        radius: Config.widgetRadius
     }
     Row {
         id: container
-        spacing: 8
+        spacing: root.workspaceSpacing
 
         anchors {
             centerIn: backdrop
@@ -46,7 +52,7 @@ Item {
                 implicitHeight: (isActive || hover) ? root.activeSize : root.passiveSize
                 radius: (isActive || hover) ? root.activeSize : root.passiveSize
 
-                color: isActive ? "#ffffff" : '#3e3e3e'
+                color: isActive ? root.activeColor : root.inactiveColor
 
                 MouseArea {
                     anchors.fill: parent
