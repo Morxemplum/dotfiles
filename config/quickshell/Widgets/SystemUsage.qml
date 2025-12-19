@@ -37,85 +37,101 @@ Item {
         id: container
         spacing: root.statSpacing
 
-        anchors {
-            centerIn: backdrop
-        }
+        anchors.centerIn: backdrop
 
-        Image {
-            anchors {
-                verticalCenter: parent.verticalCenter
-            }
-            width: this.height
-            height: Config.iconSize
-            source: "../themes/svg/cpu.svg"
-        }
+        Item {
+            anchors.verticalCenter: parent.verticalCenter
+            width: childrenRect.width
+            height: backdrop.height
 
-        Text {
-            anchors {
-                verticalCenter: parent.verticalCenter
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: this.height
+                height: Config.iconSize
+                source: "../themes/svg/cpu.svg"
             }
-            width: root.labelWidth
-            text: SystemMonitor.cpuUsage + "%"
-            color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
-                    (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
-                    root.textColor
-            font {
-                bold: true
-                family: Config.monoFontFamily
-                pointSize: Config.labelSize
-            }
-        }
 
-        Image {
-            anchors {
-                verticalCenter: parent.verticalCenter
-            }
-            width: this.height
-            height: Config.iconSize
-            source: "../themes/svg/ram.svg"
-        }
-
-        Text {
-            anchors {
-                verticalCenter: parent.verticalCenter
-            }
-            width: root.labelWidth
-
-            text: SystemMonitor.memUsagePercentage + "%"
-            color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
-                    (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
-                    root.textColor
-            font {
-                bold: true
-                family: Config.monoFontFamily
-                pointSize: Config.labelSize
+            Text {
+                anchors {
+                    left: parent.left
+                    leftMargin: Config.iconSize + root.statSpacing
+                    verticalCenter: parent.verticalCenter
+                }
+                width: root.labelWidth
+                text: SystemMonitor.cpuUsage + "%"
+                color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
+                        (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
+                        root.textColor
+                font {
+                    bold: true
+                    family: Config.monoFontFamily
+                    pointSize: Config.labelSize
+                }
             }
         }
 
-        Image {
-            anchors {
-                verticalCenter: parent.verticalCenter
+        Item {
+            anchors.verticalCenter: parent.verticalCenter
+            width: childrenRect.width
+            height: backdrop.height
+
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: this.height
+                height: Config.iconSize
+                source: "../themes/svg/ram.svg"
             }
-            width: this.height
-            height: Config.iconSize
-            source: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? "../themes/svg/temperature-danger.svg" : 
-                    (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? "../themes/svg/temperature-high.svg" : 
-                    "../themes/svg/temperature-normal.svg"
+
+            Text {
+                anchors {
+                    left: parent.left
+                    leftMargin: Config.iconSize + root.statSpacing
+                    verticalCenter: parent.verticalCenter
+                }
+                width: root.labelWidth
+
+                text: SystemMonitor.memUsagePercentage + "%"
+                color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
+                        (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
+                        root.textColor
+                font {
+                    bold: true
+                    family: Config.monoFontFamily
+                    pointSize: Config.labelSize
+                }
+            }
         }
 
-        Text {
-            anchors {
-                verticalCenter: parent.verticalCenter
+        Item {
+            anchors.verticalCenter: parent.verticalCenter
+            width: childrenRect.width
+            height: backdrop.height
+
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: this.height
+                height: Config.iconSize
+                source: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? "../themes/svg/temperature-danger.svg" : 
+                        (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? "../themes/svg/temperature-high.svg" : 
+                        "../themes/svg/temperature-normal.svg"
             }
-            width: root.tempLabelWidth
-            text: SystemMonitor.cpuTempStr
-            color: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? root.danger : 
-                    (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? root.warning : 
-                    root.textColor
-            font {
-                bold: true
-                family: Config.monoFontFamily
-                pointSize: Config.labelSize
+
+            Text {
+                anchors {
+                    left: parent.left
+                    leftMargin: Config.iconSize + root.statSpacing
+                    verticalCenter: parent.verticalCenter
+                }
+                width: root.tempLabelWidth
+                text: SystemMonitor.cpuTempStr
+                color: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? root.danger : 
+                        (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? root.warning : 
+                        root.textColor
+                font {
+                    bold: true
+                    family: Config.monoFontFamily
+                    pointSize: Config.labelSize
+                }
             }
         }
     }
