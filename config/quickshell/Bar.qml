@@ -19,7 +19,7 @@ Scope {
         PanelWindow {
             id: shellBar
 
-            required property var modelData
+            required property ShellScreen modelData
 
             screen: modelData
 

@@ -9,7 +9,7 @@ import "../Services"
 
 Item {
     id: root
-    required property var bar
+    required property PanelWindow bar
     property bool soundWidget: true
     property bool networkCtl: true
     property bool clipManager: true

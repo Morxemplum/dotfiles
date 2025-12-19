@@ -18,7 +18,7 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 // Yuck. JavaScript!
-                var datetime = this.text.split(" ")
+                const datetime = this.text.split(" ")
                 root.date = datetime[0]
                 root.time = datetime[1]
             }

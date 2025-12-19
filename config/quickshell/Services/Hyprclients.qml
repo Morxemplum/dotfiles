@@ -18,9 +18,9 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const parsedJSON = JSON.parse(this.text)
-                var title = parsedJSON["initialTitle"]
+                let title = parsedJSON["initialTitle"]
                 const delimiters = ["—", "-"]
-                var badTitle = false
+                let badTitle = false
 
                 // Borderless fullscreen applications under XWayland aren't picked up as fullscreen by Hyprland
                 if (parsedJSON["xwayland"] && parsedJSON["floating"]) {
@@ -52,7 +52,7 @@ Item {
                     }
                 }
                 if (badTitle) {
-                    var programClass = parsedJSON["class"]
+                    let programClass = parsedJSON["class"]
                     // Classes will often include the full namespace, so strip out to the very program we want
                     const namespaceCheck = programClass.lastIndexOf(".") 
                     if (namespaceCheck >= 0) {
@@ -64,7 +64,7 @@ Item {
                         return str.substring(0, index) + c + str.substring(index + 1)
                     }
                     // Replace common space delimiters with spaces, and capitalize letters at the beginning and after spaces
-                    for (var i = 0; i < programClass.length; i++) {
+                    for (let i = 0; i < programClass.length; i++) {
                         if (i == 0) {
                             programClass = replaceChar(programClass, i, programClass[i].toUpperCase())
                         }

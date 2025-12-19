@@ -1,5 +1,6 @@
 pragma ComponentBehavior : Bound
 
+import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import QtQuick
@@ -8,8 +9,8 @@ import "../Constants"
 
 Item {
     id: root
-    required property var barWindow
-    required property var barItem
+    required property PanelWindow barWindow
+    required property Item barItem
 
     property real appRadius: 5
     property real appStatusVerticalPadding: 4
@@ -74,7 +75,7 @@ Item {
                             if (parent.appTracker.hasMenu) {
                                 // Translate our mouse position to "global" coordinates (since I have multiple monitors, it's actually relative to the bar)
                                 // If we ever make the bar float, this may need to be refactored.
-                                var globalMouse = this.mapToItem(root.barItem, mouse.x, mouse.y)
+                                const globalMouse = this.mapToItem(root.barItem, mouse.x, mouse.y)
                                 parent.appTracker.display(root.barWindow, globalMouse.x, globalMouse.y)
                             }
                         }
