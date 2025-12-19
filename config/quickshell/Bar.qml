@@ -139,7 +139,7 @@ Scope {
                     height: parent.height - Config.barVerticalPadding * 2
                 }
             }
-
+            
             Loader { id: hyprclientsListener }
             Loader { id: audioListener }
 
@@ -148,7 +148,7 @@ Scope {
                 audioListener.source = "Audio.qml"
             }
 
-            visible: !(modelData.name == Hyprland.focusedMonitor.name && Hyprclients.activeFullscreen)
+            visible: !(Hyprland.focusedMonitor && modelData.name == Hyprland.focusedMonitor.name && Hyprclients.activeFullscreen)
         }
     }
 }
