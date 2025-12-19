@@ -5,7 +5,7 @@ import ".."
 
 Item {
     id: root
-    property color text_color
+    property color textColor
 
     Rectangle {
         property bool hover: false
@@ -23,7 +23,7 @@ Item {
             }
             // When hovering the cursor over the element, display the date
             text: parent.hover ? Time.date : Time.time
-            color: root.text_color
+            color: root.textColor
             font {
                 bold: true
                 family: Config.displayFontFamily

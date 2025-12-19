@@ -15,7 +15,7 @@ Scope {
         model: Quickshell.screens;
 
         PanelWindow {
-            id: shell_bar
+            id: shellBar
 
             required property var modelData
 
@@ -31,7 +31,7 @@ Scope {
 
             // This item is meant to redraw a mask of the current wallpaper
             Item {
-                id: my_bar
+                id: myBar
                 anchors.fill: parent
                 visible: !Config.barBlurEnabled
 
@@ -41,7 +41,7 @@ Scope {
                         left: parent.left
                         right: parent.right
                     }
-                    height: shell_bar.screen.height
+                    height: shellBar.screen.height
                     source: Config.wallpaperPath
                 }
             }
@@ -52,7 +52,7 @@ Scope {
             }
             // Blur the image above
             MultiEffect {
-                source: my_bar
+                source: myBar
                 anchors.fill: parent
                 blurEnabled: Config.barBlurEnabled
                 blur: 1
@@ -66,7 +66,7 @@ Scope {
 
             // Left Group of Widgets
             Row {
-                id: left_group
+                id: leftGroup
                 anchors {
                     top: parent.top
                     topMargin: Config.barVerticalPadding
@@ -79,7 +79,7 @@ Scope {
                 Widgets.SystemUsage {
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
-                    text_color: Config.textColor
+                    textColor: Config.textColor
                 }
 
                 Widgets.HyprlandWindow {
@@ -89,7 +89,7 @@ Scope {
             }
 
             Row {
-                id: center_group
+                id: centerGroup
                 anchors {
                     top: parent.top
                     topMargin: Config.barVerticalPadding
@@ -99,7 +99,7 @@ Scope {
                 height: parent.height
 
                 Widgets.HyprlandWorkspaces {
-                    screen: shell_bar.screen
+                    screen: shellBar.screen
                     width: childrenRect.width // The width of this widget depends on number of workspaces
                     height: parent.height - Config.barVerticalPadding * 2
                 }
@@ -107,7 +107,7 @@ Scope {
 
             // Right Group of Widgets
             Row {
-                id: right_group
+                id: rightGroup
                 anchors {
                     top: parent.top
                     topMargin: Config.barVerticalPadding
@@ -121,18 +121,18 @@ Scope {
                 Widgets.Clock {
                     width: 100
                     height: parent.height - Config.barVerticalPadding * 2
-                    text_color: Config.textColor
+                    textColor: Config.textColor
                 }
 
                 Widgets.UtilTray {
-                    bar: shell_bar
+                    bar: shellBar
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
                 }
 
                 Widgets.AppTray {
-                    barWindow: shell_bar
-                    barItem: my_bar
+                    barWindow: shellBar
+                    barItem: myBar
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
                 }

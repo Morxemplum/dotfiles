@@ -5,7 +5,7 @@ import ".."
 
 Item {
     id: root
-    property color text_color
+    property color textColor
     property real statSpacing: 5
     property real labelWidth: 30
     property real tempLabelWidth: 50
@@ -57,7 +57,7 @@ Item {
             text: SystemMonitor.cpuUsage + "%"
             color: (SystemMonitor.cpuUsage >= root.dangerThreshold) ? root.danger : 
                     (SystemMonitor.cpuUsage >= root.warningThreshold) ? root.warning : 
-                    root.text_color
+                    root.textColor
             font {
                 bold: true
                 family: Config.monoFontFamily
@@ -83,7 +83,7 @@ Item {
             text: SystemMonitor.memUsagePercentage + "%"
             color: (SystemMonitor.memUsagePercentage >= root.dangerThreshold) ? root.danger : 
                     (SystemMonitor.memUsagePercentage >= root.warningThreshold) ? root.warning : 
-                    root.text_color
+                    root.textColor
             font {
                 bold: true
                 family: Config.monoFontFamily
@@ -110,7 +110,7 @@ Item {
             text: SystemMonitor.cpuTempStr
             color: (SystemMonitor.cpuTemp >= root.tempDangerThreshold) ? root.danger : 
                     (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? root.warning : 
-                    root.text_color
+                    root.textColor
             font {
                 bold: true
                 family: Config.monoFontFamily
