@@ -4,7 +4,8 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-import ".."
+import "../Constants"
+import "../Services"
 
 Item {
     id: root

@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 
-import ".."
+import "../Constants"
 
 Item {
     id: root

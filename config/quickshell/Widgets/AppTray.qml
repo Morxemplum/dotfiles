@@ -4,7 +4,7 @@ import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import QtQuick
 
-import ".."
+import "../Constants"
 
 Item {
     id: root

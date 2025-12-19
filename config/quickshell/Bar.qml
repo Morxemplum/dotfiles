@@ -6,6 +6,8 @@ import QtQuick
 import QtQuick.Effects
 
 import "./Widgets" as Widgets
+import "./Constants"
+import "./Services"
 
 Scope {
     id: root

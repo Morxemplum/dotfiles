@@ -5,6 +5,8 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
+import "../Constants/"
+
 // Quickshell does not offer any utility to help assist with networking, so we
 // will need to use processes to try and determine network statuses and other
 // information.
