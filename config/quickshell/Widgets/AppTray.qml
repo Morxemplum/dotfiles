@@ -75,7 +75,6 @@ Item {
                                 // Translate our mouse position to "global" coordinates (since I have multiple monitors, it's actually relative to the bar)
                                 // If we ever make the bar float, this may need to be refactored.
                                 var globalMouse = this.mapToItem(root.barItem, mouse.x, mouse.y)
-                                // TODO: Try and pass theming information to the app tracker, if possible
                                 parent.appTracker.display(root.barWindow, globalMouse.x, globalMouse.y)
                             }
                         }
