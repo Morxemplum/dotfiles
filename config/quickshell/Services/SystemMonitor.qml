@@ -18,11 +18,12 @@ Singleton {
     Process {
         id: cpuProc
         command: ["head", "-1", "/proc/stat"]
+        running: true
         stdout: SplitParser {
             onRead: data => {
-                var p = data.trim().split(/\s+/)
-                var idle = parseInt(p[4]) + parseInt(p[5])
-                var total = p.slice(1, 8).reduce((a, b) => a + parseInt(b), 0)
+                const p = data.trim().split(/\s+/)
+                const idle = parseInt(p[4]) + parseInt(p[5])
+                const total = p.slice(1, 8).reduce((a, b) => a + parseInt(b), 0)
                 if (root.lastCpuTotal > 0) {
                     root.cpuUsage = Math.round(100 * (1 - (idle - root.lastCpuIdle) / (total - root.lastCpuTotal)))
                 }
@@ -30,21 +31,20 @@ Singleton {
                 root.lastCpuIdle = idle
             }
         }
-        Component.onCompleted: running = true
     }
 
     Process {
         id: memProc
         command: ["sh", "-c", "free | grep Mem"]
+        running: true
         stdout: SplitParser {
             onRead: data => {
-                var p = data.trim().split(/\s+/)
-                var totalMemory = parseInt(p[1])
-                var usingMemory = parseInt(p[2])
+                const p = data.trim().split(/\s+/)
+                const totalMemory = parseInt(p[1])
+                const usingMemory = parseInt(p[2])
                 root.memUsagePercentage = Math.round(100 * (usingMemory / totalMemory))
             }
         }
-        Component.onCompleted: running = true
     }
     
     Process {
@@ -52,14 +52,14 @@ Singleton {
         // Keep in mind this can very well change depending on the hardware
         // Try to find a way to display a failure?
         command: ["sh", "-c", "sensors coretemp-isa-0000 | grep Package"]
+        running: true
         stdout: SplitParser {
             onRead: data => {
-                var p = data.trim().split(/\s+/)
+                const p = data.trim().split(/\s+/)
                 root.cpuTempStr = p[3].slice(1)
                 root.cpuTemp = parseInt(root.cpuTempStr.slice(0, -2))
             }
         }
-        Component.onCompleted: running = true
     }
 
 
