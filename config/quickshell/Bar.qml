@@ -19,9 +19,7 @@ Scope {
 
         PanelWindow {
             id: shellBar
-
             required property ShellScreen modelData
-
             screen: modelData
 
             anchors {

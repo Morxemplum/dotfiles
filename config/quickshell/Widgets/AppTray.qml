@@ -27,9 +27,7 @@ Item {
     Row {
         id: container
         layoutDirection: Qt.RightToLeft
-        anchors {
-            centerIn: backdrop
-        }
+        anchors.centerIn: backdrop
         height: parent.height 
 
         Repeater {

@@ -20,8 +20,6 @@ Item {
 
     Rectangle {
         id: backdrop
-        property bool hover: false
-
         anchors {
             left: parent.left
             verticalCenter: parent.verticalCenter
@@ -36,7 +34,6 @@ Item {
     Row {
         id: container
         spacing: root.statSpacing
-
         anchors.centerIn: backdrop
 
         Item {
@@ -50,7 +47,6 @@ Item {
                 height: Config.iconSize
                 source: "../themes/svg/cpu.svg"
             }
-
             Text {
                 anchors {
                     left: parent.left
@@ -81,7 +77,6 @@ Item {
                 height: Config.iconSize
                 source: "../themes/svg/ram.svg"
             }
-
             Text {
                 anchors {
                     left: parent.left
@@ -115,7 +110,6 @@ Item {
                         (SystemMonitor.cpuTemp >= root.tempWarningThreshold) ? "../themes/svg/temperature-high.svg" : 
                         "../themes/svg/temperature-normal.svg"
             }
-
             Text {
                 anchors {
                     left: parent.left

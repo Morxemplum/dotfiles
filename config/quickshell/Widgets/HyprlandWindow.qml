@@ -19,14 +19,7 @@ Item {
 
     Text {
         id: currWindow
-        anchors {
-            left: backdrop.left
-            leftMargin: Config.widgetRadius
-            top: backdrop.top
-            // FIXME: Simplify this calculation. This one likes to be a pain in the ass for some reason
-            topMargin: backdrop.height / 2 - this.font.pointSize * 3 / 4
-        }
-        height: parent.height
+        anchors.centerIn: backdrop
         color: Config.textColor
         text: Hyprclients.focusedProgram
 

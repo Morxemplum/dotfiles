@@ -28,9 +28,7 @@ Item {
         id: container
         spacing: root.workspaceSpacing
 
-        anchors {
-            centerIn: backdrop
-        }
+        anchors.centerIn: backdrop
         
         Repeater {
             // Only show active workspaces. I don't want to see all 9 of them. It's a waste of space
@@ -44,10 +42,7 @@ Item {
                 property bool isActive: workspace.active && workspace.monitor.name == root.screen.name
                 property bool hover: false
 
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                }
-
+                anchors.verticalCenter: parent.verticalCenter
                 implicitWidth: (isActive || hover) ? root.activeSize : root.passiveSize
                 implicitHeight: (isActive || hover) ? root.activeSize : root.passiveSize
                 radius: (isActive || hover) ? root.activeSize : root.passiveSize
@@ -59,13 +54,8 @@ Item {
                     hoverEnabled: !parent.isActive
                     onClicked: Hyprland.dispatch("workspace " + parent.workspace.id)
 
-                    onEntered: {
-                        parent.hover = true
-                    }
-        
-                    onExited: {
-                        parent.hover = false
-                    }
+                    onEntered: parent.hover = true
+                    onExited: parent.hover = false
                 }
             }
         }

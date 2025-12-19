@@ -31,18 +31,12 @@ Item {
                 pointSize: Config.labelSize
             }
         }
-        // Add hover behavior
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
 
-            onEntered: {
-                parent.hover = true
-            }
-
-            onExited: {
-                parent.hover = false
-            }
+            onEntered: parent.hover = true
+            onExited: parent.hover = false
         }
     }
 }

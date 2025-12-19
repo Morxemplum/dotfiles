@@ -26,9 +26,7 @@ Item {
     Row {
         id: container
         layoutDirection: Qt.RightToLeft
-        anchors {
-            centerIn: backdrop
-        }
+        anchors.centerIn: backdrop
         height: parent.height 
 
         Rectangle {
@@ -41,25 +39,18 @@ Item {
             color: '#00000000'
 
             Image {
-                anchors {
-                    centerIn: parent
-                }
+                anchors.centerIn: parent
                 width: Config.iconSize
                 height: Config.iconSize
-                // FIXME: Find a more efficient way to write this?
                 source: (Audio.volume == 0) ? "../themes/svg/no-audio.svg" :
-                        (Audio.volume < (1 / 3)) ? "../themes/svg/sound-1.svg" :
-                        (Audio.volume < (2 / 3)) ? "../themes/svg/sound-2.svg" :
-                        "../themes/svg/sound-3.svg"
-            }
+                        "../themes/svg/sound-" + Math.min(Math.trunc(Audio.volumePercentage * 3 / 100) + 1, 3) + ".svg"
+            } 
 
             MouseArea {
                 anchors.fill: parent
                 // TODO: Make an intermediate solution where I can just adjust the volume of the slider
                 // Eventually, this functionality will be reserved for a right click instead of a left click
-                onClicked: {
-                    soundCtl.running = true
-                }
+                onClicked: soundCtl.running = true
             }
         }
 
@@ -103,9 +94,7 @@ Item {
             color: '#00000000'
 
             Image {
-                anchors {
-                    centerIn: parent
-                }
+                anchors.centerIn: parent
                 width: Config.iconSize
                 height: Config.iconSize
                 source: "../themes/svg/clipboard.svg"
@@ -113,9 +102,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
-                    clipHist.running = true
-                }
+                onClicked: clipHist.running = true
             }
         }
     }

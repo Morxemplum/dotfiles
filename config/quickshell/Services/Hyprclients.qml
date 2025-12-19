@@ -74,7 +74,6 @@ Item {
                         }
                     }
                     root.focusedProgram = programClass
-                    
                 } else {
                     root.focusedProgram = title
                 }
@@ -92,7 +91,6 @@ Item {
                     // The direct data gives the current class and title
                     // This is no good for my use case, as programs will often change the title to convey additional information
                     // I found the best trait that fits my use case is initialTitle, but I'll save a separate property with the current one
-                    
                     root.focusedWindow = splitData[1]
                     activeWindow.running = true
                     break;
