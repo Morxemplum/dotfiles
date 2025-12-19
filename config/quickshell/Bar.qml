@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Services.SystemTray
 
 import QtQuick
 import QtQuick.Effects
@@ -84,9 +85,14 @@ Scope {
                     textColor: Config.textColor
                 }
 
-                Widgets.HyprlandWindow {
-                    width: childrenRect.width
+                Loader {
+                    id: currentHyprlandWindow
+                    asynchronous: true
+                    width: 1
                     height: parent.height - Config.barVerticalPadding * 2
+                    visible: status == Loader.Ready
+
+                    source: Hyprclients.focusedProgram.length > 0 ? "./Widgets/HyprlandWindow.qml" : ""
                 }
             }
 
@@ -131,12 +137,26 @@ Scope {
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
                 }
+                
+                Loader {
+                    id: appTray
+                    property url sauce: SystemTray.items.values.length > 0 ? "./Widgets/AppTray.qml" : ""
 
-                Widgets.AppTray {
-                    barWindow: shellBar
-                    barItem: myBar
-                    width: childrenRect.width
+                    asynchronous: true
+                    // With a Loader, you can't use childrenRect. You need to calculate the width manually
+                    width: this.height * SystemTray.items.values.length + Config.widgetRadius + Config.widgetHorizontalPadding
                     height: parent.height - Config.barVerticalPadding * 2
+                    visible: status == Loader.Ready
+
+                    // Hacky workaround to setting the source and feeding the required properties
+                    // This is based on a real Qt bug: https://qt-project.atlassian.net/browse/QTBUG-125071
+                    onSauceChanged: {
+                        const requiredProperties = {
+                            "barWindow": shellBar,
+                            "barItem": myBar
+                        }
+                        this.setSource(sauce, requiredProperties)
+                    }
                 }
             }
 
