@@ -80,8 +80,7 @@ Singleton {
 
         stdout: StdioCollector {
             onStreamFinished: {
-                const info = this.text.split(/[:]/)
-                networkRoot.wifiStrength = info[1]
+                networkRoot.wifiStrength = parseInt(this.text)
             }
         }
     }
