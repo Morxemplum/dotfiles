@@ -40,15 +40,20 @@ Item {
                     root.activeFullscreen = false
                 }
 
-                // If the title isn't properly initialized, then refer to the current title
-                if (title.trim() == "") {
-                    title = parsedJSON["title"]
-                }
-                // Unfortunately initialTitle is not always perfect. So we'll find common delimiters and identify bad titles
-                for (const delimiter of delimiters) {
-                    if (title.includes(delimiter)) {
-                        badTitle = true
-                        break;
+                // If initialTitle is null, then title is null and we automatically have a bad title.
+                if (!title) {
+                    badTitle = true
+                } else {
+                    // If the title isn't properly initialized, then refer to the current title
+                    if (title.trim() == "") {
+                        title = parsedJSON["title"]
+                    }
+                    // Unfortunately initialTitle is not always perfect. So we'll find common delimiters and identify bad titles
+                    for (const delimiter of delimiters) {
+                        if (title.includes(delimiter)) {
+                            badTitle = true
+                            break;
+                        }
                     }
                 }
                 if (badTitle) {
