@@ -73,8 +73,7 @@ Item {
                 source: (Networking.status == Enums.ConnectionStatus.Ethernet) ? "../themes/svg/ethernet-connection.svg" :
                         (Networking.status == Enums.ConnectionStatus.Limited) ? "../themes/svg/ethernet-limited-connection.svg" :
                         (Networking.status == Enums.ConnectionStatus.Wireless) ? "../themes/svg/wifi-" + Math.min(Math.trunc(Networking.wifiStrength / 25), 3) + ".svg" :
-                        // TODO: Probably make a separate icon to indicate a pending connection
-                        (Networking.status == Enums.ConnectionStatus.Pending) ? "../themes/svg/ethernet-limited-connection.svg" :
+                        (Networking.status == Enums.ConnectionStatus.Pending) ? "../themes/svg/pending-connection.svg" :
                         "../themes/svg/no-connection.svg"
             }
 
