@@ -7,6 +7,10 @@ import QtQuick
 Singleton {
     property string wallpaperPath: "./themes/wallpapers/bees_on_yellow.jpg"
 
+    // App Defaults
+    property string terminalEmu: "kitty"
+    property string sysMonitorApp: "btop"
+
     // Text Constants
     property string displayFontFamily: "AdwaitaSans"
     property string monoFontFamily: "NotoSansMono"

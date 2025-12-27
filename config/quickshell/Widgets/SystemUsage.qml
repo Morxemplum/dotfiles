@@ -1,4 +1,5 @@
 pragma ComponentBehavior : Bound
+import Quickshell.Io
 import QtQuick
 
 import "../Constants"
@@ -29,6 +30,11 @@ Item {
         width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height
         radius: Config.widgetRadius
+    }
+
+    MouseArea {
+        anchors.fill: backdrop
+        onClicked: monitorApp.startDetached()
     }
 
     Row {
@@ -128,6 +134,11 @@ Item {
                 }
             }
         }
+    }
+
+    Process {
+        id: monitorApp
+        command: [ Config.terminalEmu, Config.sysMonitorApp ]
     }
     
 }
