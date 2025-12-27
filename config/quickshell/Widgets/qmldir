@@ -1,0 +1,6 @@
+AppTray 1.0 AppTray.qml
+Clock 1.0 Clock.qml
+HyprlandWindow 1.0 HyprlandWindow.qml
+HyprlandWorkspaces 1.0 HyprlandWorkspaces.qml
+SystemUsage 1.0 SystemUsage.qml
+UtilTray 1.0 UtilTray.qml
