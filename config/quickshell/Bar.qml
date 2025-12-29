@@ -125,9 +125,27 @@ Scope {
                 layoutDirection: Qt.RightToLeft
 
                 Widgets.Clock {
+                    id: clock
                     width: 100
                     height: parent.height - Config.barVerticalPadding * 2
                     textColor: Config.textColor
+
+                    onHoverChanged: {
+                        if (hover) {
+                            clockTooltip.loading = true
+                            Time.tooltipActivated()
+                        } else {
+                            clockTooltip.active = false
+                            Time.tooltipTimer.stop()
+                        }
+                    }
+
+                    Widgets.Tooltip {
+                        id: clockTooltip
+                        bar: shellBar
+                        item: clock
+                        text: Time.time12 + "\n" + Time.dateFull
+                    }
                 }
 
                 Widgets.UtilTray {

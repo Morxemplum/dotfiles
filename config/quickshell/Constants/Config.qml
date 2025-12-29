@@ -16,6 +16,7 @@ Singleton {
     property string monoFontFamily: "NotoSansMono"
     property real labelSize: 10
     property real headerLabelSize: 12
+    property real tooltipLabelSize: 12
 
     // Color palette
     property color primaryColor: "#000000"
@@ -39,4 +40,8 @@ Singleton {
     property real widgetHorizontalPadding: 10
     property real widgetRadius: 10
     property real iconSize: 20
+
+    // Tooltip Related Constants
+    property real tooltipOpacity: 0.8
+    property real tooltipPadding: 5
 }

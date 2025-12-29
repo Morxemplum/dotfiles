@@ -4,3 +4,5 @@ HyprlandWindow 1.0 HyprlandWindow.qml
 HyprlandWorkspaces 1.0 HyprlandWorkspaces.qml
 SystemUsage 1.0 SystemUsage.qml
 UtilTray 1.0 UtilTray.qml
+
+Tooltip 1.0 Tooltip.qml

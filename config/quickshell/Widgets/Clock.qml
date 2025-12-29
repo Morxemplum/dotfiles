@@ -7,10 +7,9 @@ import "../Services"
 Item {
     id: root
     property color textColor
+    property bool hover: false
 
     Rectangle {
-        property bool hover: false
-
         color: Config.accentColor
 
         width: parent.width
@@ -22,8 +21,7 @@ Item {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
             }
-            // When hovering the cursor over the element, display the date
-            text: parent.hover ? Time.date : Time.time
+            text: Time.time
             color: root.textColor
             font {
                 bold: true
@@ -35,8 +33,8 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
 
-            onEntered: parent.hover = true
-            onExited: parent.hover = false
+            onEntered: root.hover = true
+            onExited: root.hover = false
         }
     }
 }
