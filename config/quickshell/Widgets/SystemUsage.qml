@@ -19,6 +19,12 @@ Item {
     property real tempWarningThreshold: 75
     property real tempDangerThreshold: 95
 
+    property bool hover: false
+    property Item activeItem
+    readonly property Item cpu: cpuWidget
+    readonly property Item memory: memWidget
+    readonly property Item temperature: tempWidget
+
     Rectangle {
         id: backdrop
         anchors {
@@ -43,6 +49,7 @@ Item {
         anchors.centerIn: backdrop
 
         Item {
+            id: cpuWidget
             anchors.verticalCenter: parent.verticalCenter
             width: childrenRect.width
             height: backdrop.height
@@ -70,9 +77,24 @@ Item {
                     pointSize: Config.labelSize
                 }
             }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    root.hover = true
+                    root.activeItem = cpuWidget
+                }
+                onExited: {
+                    root.hover = false
+                    root.activeItem = null
+                }
+            }
         }
 
         Item {
+            id: memWidget
             anchors.verticalCenter: parent.verticalCenter
             width: childrenRect.width
             height: backdrop.height
@@ -101,9 +123,24 @@ Item {
                     pointSize: Config.labelSize
                 }
             }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    root.hover = true
+                    root.activeItem = memWidget
+                }
+                onExited: {
+                    root.hover = false
+                    root.activeItem = null
+                }
+            }
         }
 
         Item {
+            id: tempWidget
             anchors.verticalCenter: parent.verticalCenter
             width: childrenRect.width
             height: backdrop.height
@@ -131,6 +168,20 @@ Item {
                     bold: true
                     family: Config.monoFontFamily
                     pointSize: Config.labelSize
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    root.hover = true
+                    root.activeItem = tempWidget
+                }
+                onExited: {
+                    root.hover = false
+                    root.activeItem = null
                 }
             }
         }

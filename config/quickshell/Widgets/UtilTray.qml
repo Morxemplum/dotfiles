@@ -116,6 +116,7 @@ Item {
         command: ["pwvucontrol"]
     }
 
+    // TODO: Prompt a password before accessing the clipboard manager. Clipboards can contain sensitive information (e.g. passwords)
     Process {
         id: clipHist
         command: ["sh", "-c", "cliphist list | rofi -dmenu | cliphist decode | wl-copy"]

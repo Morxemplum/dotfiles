@@ -78,9 +78,25 @@ Scope {
                 height: parent.height
 
                 Widgets.SystemUsage {
+                    id: sysStats
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
                     textColor: Config.textColor
+
+                    onHoverChanged: {
+                        if (hover) sysStatsTooltip.loading = true
+                        else sysStatsTooltip.active = false
+                    }
+
+                    Widgets.Tooltip {
+                        id: sysStatsTooltip
+                        bar: shellBar
+                        item: sysStats.activeItem
+                        text: (sysStats.activeItem == sysStats.cpu) ? "CPU Usage" :
+                                (sysStats.activeItem == sysStats.memory) ? "Memory Usage" :
+                                (sysStats.activeItem == sysStats.temperature) ? "CPU Temperature" :
+                                ""
+                    }
                 }
 
                 Loader {
