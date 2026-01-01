@@ -16,6 +16,9 @@ Item {
     property color activeColor: "#ffffff"
     property color inactiveColor: "#3e3e3e"
 
+    property Rectangle hoveredItem: null
+    property HyprlandWorkspace hoveredWorkspace: null
+
     Rectangle {
         id: backdrop
         color: Config.accentColor
@@ -54,8 +57,16 @@ Item {
                     hoverEnabled: !parent.isActive
                     onClicked: Hyprland.dispatch("workspace " + parent.workspace.id)
 
-                    onEntered: parent.hover = true
-                    onExited: parent.hover = false
+                    onEntered: {
+                        parent.hover = true
+                        root.hoveredItem = parent
+                        root.hoveredWorkspace = parent.workspace
+                    }
+                    onExited: {
+                        parent.hover = false
+                        root.hoveredItem = null
+                        root.hoveredWorkspace = null
+                    }
                 }
             }
         }

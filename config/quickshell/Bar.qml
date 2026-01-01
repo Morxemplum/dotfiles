@@ -121,9 +121,22 @@ Scope {
                 height: parent.height
 
                 Widgets.HyprlandWorkspaces {
+                    id: hyprworkspaces
                     screen: shellBar.screen
                     width: childrenRect.width // The width of this widget depends on number of workspaces
                     height: parent.height - Config.barVerticalPadding * 2
+
+                    onHoveredItemChanged: {
+                        if (hoveredItem != null) workspacesTooltip.loading = true
+                        else workspacesTooltip.active = false
+                    }
+
+                    Widgets.Tooltip {
+                        id: workspacesTooltip
+                        bar: shellBar
+                        item: hyprworkspaces.hoveredItem
+                        text: hyprworkspaces.hoveredWorkspace != null ? "workspace " + hyprworkspaces.hoveredWorkspace.name : ""
+                    }
                 }
             }
 
