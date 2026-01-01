@@ -58,6 +58,10 @@ Item {
                 }
                 if (badTitle) {
                     let programClass = parsedJSON["class"]
+                    if (!programClass) {
+                        root.focusedProgram = ""
+                        return
+                    }
                     // Classes will often include the full namespace, so strip out to the very program we want
                     const namespaceCheck = programClass.lastIndexOf(".") 
                     if (namespaceCheck >= 0) {
