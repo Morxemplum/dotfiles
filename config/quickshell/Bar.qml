@@ -178,9 +178,25 @@ Scope {
                 }
 
                 Widgets.UtilTray {
+                    id: utilities
                     bar: shellBar
                     width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
+
+                    onActiveItemChanged: {
+                        if (activeItem != null) utilTrayTooltip.loading = true
+                        else utilTrayTooltip.active = false
+                    }
+
+                    Widgets.Tooltip {
+                        id: utilTrayTooltip
+                        bar: shellBar
+                        item: utilities.activeItem
+                        text: (utilities.activeItem == utilities.clipboard) ? "Clipboard Manager" :
+                                (utilities.activeItem == utilities.network) ? "Network Status" :
+                                (utilities.activeItem == utilities.sound) ? "Audio Volume" :
+                                ""
+                    }
                 }
                 
                 Loader {

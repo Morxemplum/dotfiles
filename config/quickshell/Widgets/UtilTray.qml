@@ -14,6 +14,12 @@ Item {
     property bool networkCtl: true
     property bool clipManager: true
 
+    property int hoverCount: 0 // Debounce measure to stop prematurely setting the item to null
+    property Item activeItem
+    readonly property Item sound: soundTray
+    readonly property Item network: networkStatus
+    readonly property Item clipboard: clipboardManager
+
     Rectangle {
         id: backdrop
         color: Config.accentColor
@@ -48,6 +54,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 // TODO: When left clicked, open an applet where I can quick adjust volume of sink, source, and apps
                 // TODO: When hovered, open a mini-applet for quick sink volume adjustment via scrolling
@@ -55,6 +62,15 @@ Item {
                     if (mouse.button === Qt.RightButton) {
                         soundCtl.startDetached()
                     }
+                }
+
+                onEntered: {
+                    root.activeItem = soundTray
+                    root.hoverCount += 1
+                }
+                onExited: {
+                    root.hoverCount -= 1
+                    if (root.hoverCount <= 0) root.activeItem = null
                 }
             }
         }
@@ -82,6 +98,20 @@ Item {
                         "../themes/svg/no-connection.svg"
             }
 
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    root.activeItem = networkStatus
+                    root.hoverCount += 1
+                }
+                onExited: {
+                    root.hoverCount -= 1
+                    if (root.hoverCount <= 0) root.activeItem = null
+                }
+            }
+
             // Quickshell doesn't have a built-in method of getting network status, so we'll need to figure something out
             // We may have to actually try and create our own applet as an ideal solution. networkmanager_dmenu would be the temporary workaround
         }
@@ -106,7 +136,17 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
+
                 onClicked: clipHist.running = true
+                onEntered: {
+                    root.activeItem = clipboardManager
+                    root.hoverCount += 1
+                }
+                onExited: {
+                    root.hoverCount -= 1
+                    if (root.hoverCount <= 0) root.activeItem = null
+                }
             }
         }
     }
