@@ -15,6 +15,10 @@ Item {
     property real appRadius: 5
     property real appStatusVerticalPadding: 4
 
+    property int hoveredCount: 0 // Debounce measure to stop prematurely setting the item to null
+    property Item hoveredItem
+    property SystemTrayItem hoveredTrayItem
+
     Rectangle {
         id: backdrop
         color: Config.accentColor
@@ -63,7 +67,9 @@ Item {
                 // TODO: Add tooltip functionality to tray items
                 MouseArea {
                     anchors.fill: parent
+                    hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+
                     onClicked: mouse => {
                         if (mouse.button === Qt.LeftButton) {
                             parent.appTracker.activate()
@@ -76,6 +82,19 @@ Item {
                                 const globalMouse = this.mapToItem(root.barItem, mouse.x, mouse.y)
                                 parent.appTracker.display(root.barWindow, globalMouse.x, globalMouse.y)
                             }
+                        }
+                    }
+
+                    onEntered: {
+                        root.hoveredItem = parent
+                        root.hoveredTrayItem = parent.appTracker
+                        root.hoveredCount += 1
+                    }
+                    onExited: {
+                        root.hoveredCount -= 1
+                        if (root.hoveredCount == 0) {
+                            root.hoveredItem = null
+                            root.hoveredTrayItem = null
                         }
                     }
                 }

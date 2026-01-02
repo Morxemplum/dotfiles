@@ -198,25 +198,25 @@ Scope {
                                 ""
                     }
                 }
-                
-                Loader {
+
+                Widgets.AppTray {
                     id: appTray
-                    property url sauce: SystemTray.items.values.length > 0 ? "./Widgets/AppTray.qml" : ""
-
-                    asynchronous: true
-                    // With a Loader, you can't use childrenRect. You need to calculate the width manually
-                    width: this.height * SystemTray.items.values.length + Config.widgetRadius + Config.widgetHorizontalPadding
+                    barWindow: shellBar
+                    barItem: myBar
+                    visible: SystemTray.items.values.length > 0
+                    width: childrenRect.width
                     height: parent.height - Config.barVerticalPadding * 2
-                    visible: status == Loader.Ready
 
-                    // Hacky workaround to setting the source and feeding the required properties
-                    // This is based on a real Qt bug: https://qt-project.atlassian.net/browse/QTBUG-125071
-                    onSauceChanged: {
-                        const requiredProperties = {
-                            "barWindow": shellBar,
-                            "barItem": myBar
-                        }
-                        this.setSource(sauce, requiredProperties)
+                    onHoveredItemChanged: {
+                        if (hoveredItem != null) appTrayTooltip.loading = true
+                        else appTrayTooltip.active = false
+                    }
+
+                    Widgets.Tooltip {
+                        id: appTrayTooltip
+                        bar: shellBar
+                        item: appTray.hoveredItem
+                        text: (appTray.hoveredTrayItem != null) ? appTray.hoveredTrayItem.tooltipTitle : ""
                     }
                 }
             }
