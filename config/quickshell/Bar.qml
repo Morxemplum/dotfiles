@@ -206,14 +206,25 @@ Scope {
                     onActiveItemChanged: {
                         if (activeItem != null) utilTrayTooltip.loading = true
                         else utilTrayTooltip.active = false
+
+                        switch (activeItem) {
+                            case network:
+                                Networking.dataActivated()
+                                break
+                            default:
+                                Networking.dataTimer.stop()
+                                Networking.lastRcv = -1
+                                Networking.lastTrans = -1
+                                break
+                        }
                     }
 
                     Widgets.Tooltip {
                         id: utilTrayTooltip
                         bar: shellBar
                         item: utilities.activeItem
-                        text: (utilities.activeItem == utilities.clipboard) ? "Clipboard Manager" :
-                                (utilities.activeItem == utilities.network) ? "Network Status" :
+                        text: (utilities.activeItem == utilities.clipboard) ? qsTr("Clipboard Manager") :
+                                (utilities.activeItem == utilities.network) ? Networking.connectionInfoStr() :
                                 (utilities.activeItem == utilities.sound) ? "Audio Volume" :
                                 ""
                     }
