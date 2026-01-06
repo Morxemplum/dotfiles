@@ -11,6 +11,7 @@ LazyLoader {
     property PanelWindow bar
     property Item item
     property string text
+    property bool monospace: false
 
     PopupWindow {
         anchor {
@@ -34,7 +35,7 @@ LazyLoader {
             text: root.text
             color: Config.textColor
             font {
-                family: Config.displayFontFamily
+                family: root.monospace ? Config.monoFontFamily : Config.displayFontFamily
                 pointSize: Config.tooltipLabelSize
             }
         }

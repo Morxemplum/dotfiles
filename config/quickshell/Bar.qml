@@ -88,14 +88,34 @@ Scope {
                         else sysStatsTooltip.active = false
                     }
 
+                    onActiveItemChanged: {
+                        switch (activeItem) {
+                            case cpu: 
+                                SystemMonitor.threadUsageActivated()
+                                break
+                            case memory:
+                                SystemMonitor.fullMemoryActivated()
+                                break
+                            case temperature:
+                                SystemMonitor.tempCoresActivated()
+                                break
+                            default:
+                                SystemMonitor.cpuTimer.stop()
+                                SystemMonitor.memTimer.stop()
+                                SystemMonitor.tempTimer.stop()
+                                break
+                        }
+                    }
+
                     Widgets.Tooltip {
                         id: sysStatsTooltip
                         bar: shellBar
                         item: sysStats.activeItem
-                        text: (sysStats.activeItem == sysStats.cpu) ? "CPU Usage" :
-                                (sysStats.activeItem == sysStats.memory) ? "Memory Usage" :
-                                (sysStats.activeItem == sysStats.temperature) ? "CPU Temperature" :
+                        text: (sysStats.activeItem == sysStats.cpu) ? SystemMonitor.cpuThreadUsage :
+                                (sysStats.activeItem == sysStats.memory) ? SystemMonitor.memoryUsageString() :
+                                (sysStats.activeItem == sysStats.temperature) ? SystemMonitor.cpuCoreTemps :
                                 ""
+                        monospace: true
                     }
                 }
 
