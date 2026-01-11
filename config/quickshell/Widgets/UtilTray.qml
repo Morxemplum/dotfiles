@@ -59,7 +59,6 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 // TODO: When left clicked, open an applet where I can quick adjust volume of sink, source, and apps
-                // TODO: When hovered, open a mini-applet for quick sink volume adjustment via scrolling
                 onClicked: mouse => {
                     if (mouse.button === Qt.RightButton) {
                         soundCtl.startDetached()

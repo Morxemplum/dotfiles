@@ -64,7 +64,6 @@ Item {
                     source: parent.appTracker.icon
                 }
 
-                // TODO: Add tooltip functionality to tray items
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
