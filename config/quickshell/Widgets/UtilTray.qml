@@ -2,10 +2,12 @@ pragma ComponentBehavior : Bound
 
 import Quickshell
 import Quickshell.Io
+import Quickshell.Services.Pipewire
 import QtQuick
 
 import "../Constants"
 import "../Services"
+import "../Applets/Minis" as Applets
 
 Item {
     id: root
@@ -65,12 +67,22 @@ Item {
                 }
 
                 onEntered: {
-                    root.activeItem = soundTray
-                    root.hoverCount += 1
+                    miniSlider.loading = true
                 }
                 onExited: {
-                    root.hoverCount -= 1
-                    if (root.hoverCount <= 0) root.activeItem = null
+                    miniSlider.active = false
+                }
+
+                onWheel: event => {
+                    const volumeAdjustAmount = 5
+                    const dir = Math.sign(event.angleDelta.y)
+                    const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+
+                    if (Audio.defaultSinkId >= 0) {
+                        // Base it off the percentage value to stop build up of floating point error
+                        const newVolume = (Audio.volumePercentage + volumeAdjustAmount * dir) / 100
+                        Audio.defaultNode.volume = clamp(newVolume, 0, 1)
+                    }
                 }
             }
         }
@@ -162,15 +174,9 @@ Item {
         command: ["sh", "-c", "cliphist list | rofi -dmenu | cliphist decode | wl-copy"]
     }
 
-    // TODO: This will be a standalone applet to quickly adjust volume
-    PopupWindow {
-        id: volumeSlider
-
-        anchor.item: soundTray
-        anchor.rect.x: soundTray.x - width / 4
-        anchor.rect.y: soundTray.y + root.bar.height
-        implicitWidth: 32
-        implicitHeight: 128
-        visible: false
+    Applets.VolumeSlider {
+        id: miniSlider
+        bar: root.bar
+        item: soundTray
     }
 }

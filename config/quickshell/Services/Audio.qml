@@ -8,8 +8,9 @@ import QtQuick
 Singleton {
     id: audioRoot
     readonly property real defaultSinkId: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.id : -1
+    readonly property PwNodeAudio defaultNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
     readonly property real volume: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio.volume : 0
-    readonly property int volumePercentage: volume * 100
+    readonly property int volumePercentage: Math.round(volume * 100)
 
     PwNodeLinkTracker {
         id: tracker

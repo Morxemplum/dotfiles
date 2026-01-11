@@ -253,6 +253,10 @@ Scope {
             }
 
             visible: !(Hyprland.focusedMonitor && modelData.name == Hyprland.focusedMonitor.name && Hyprclients.activeFullscreen)
+
+            // A dummy window has to be created for our lazy loaders to work. This is intentional behavior from Quickshell
+            // https://quickshell.org/docs/master/types/Quickshell/LazyLoader/
+            PopupWindow {}
         }
     }
 }
