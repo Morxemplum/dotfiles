@@ -20,9 +20,13 @@ Singleton {
 
     // Color palette
     property color primaryColor: "#000000"
-    property color accentColor: "#000000"
-    property color urgentColor: "#8dff0000"
-    property color textColor: "#ffffff"
+    property color accentColor: '#00ffc8'
+    property color urgentColor: '#8dff0000'
+    property color textColor: '#ffffff'
+
+    property color appletBackgroundColor: '#262626'
+    property color appletTextColor: textColor
+    property color toggleInactiveColor: '#4d4d4d'
 
     // Bar Related Constants
     property real barHeight: 40

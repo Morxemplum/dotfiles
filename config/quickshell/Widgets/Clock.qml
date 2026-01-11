@@ -10,7 +10,7 @@ Item {
     property bool hover: false
 
     Rectangle {
-        color: Config.accentColor
+        color: Config.primaryColor
 
         width: parent.width
         height: parent.height

@@ -32,7 +32,7 @@ Item {
             verticalCenter: parent.verticalCenter
         }
 
-        color: Config.accentColor
+        color: Config.primaryColor
         width: container.width + Config.widgetRadius + Config.widgetHorizontalPadding
         height: parent.height
         radius: Config.widgetRadius

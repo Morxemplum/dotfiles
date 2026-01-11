@@ -23,7 +23,7 @@ LazyLoader {
         }
         implicitWidth: tooltipLabel.width + Config.tooltipPadding * 2
         implicitHeight: tooltipLabel.height + Config.tooltipPadding * 2
-        color: Qt.rgba(Config.accentColor.r, Config.accentColor.g, Config.accentColor.b, Config.tooltipOpacity)
+        color: Qt.rgba(Config.primaryColor.r, Config.primaryColor.g, Config.primaryColor.b, Config.tooltipOpacity)
         visible: root.active && root.item != null && root.visibleCondition
 
         Text {
