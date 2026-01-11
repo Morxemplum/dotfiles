@@ -49,6 +49,7 @@ Singleton {
     // Tooltip Related Constants
     property real tooltipOpacity: 0.8
     property real tooltipPadding: 5
+    property real tooltipRadius: 10
 
     // Slider Related Constants
     property real sliderBackgroundRadius: 3

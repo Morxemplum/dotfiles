@@ -21,22 +21,29 @@ LazyLoader {
                 y: Config.barHeight + Config.tooltipPadding
             }
         }
-        implicitWidth: tooltipLabel.width + Config.tooltipPadding * 2
-        implicitHeight: tooltipLabel.height + Config.tooltipPadding * 2
-        color: Qt.rgba(Config.primaryColor.r, Config.primaryColor.g, Config.primaryColor.b, Config.tooltipOpacity)
+        color: "transparent"
+        implicitWidth: tooltipLabel.width + Config.tooltipPadding * 2 + Config.tooltipRadius / 2
+        implicitHeight: tooltipLabel.height + Config.tooltipPadding * 2 + Config.tooltipRadius / 2
         visible: root.active && root.item != null && root.visibleCondition
 
-        Text {
-            id: tooltipLabel
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.verticalCenter
-            }
-            text: root.text
-            color: Config.textColor
-            font {
-                family: root.monospace ? Config.monoFontFamily : Config.displayFontFamily
-                pointSize: Config.tooltipLabelSize
+        Rectangle {
+            id: background
+            anchors.fill: parent
+            color: Qt.rgba(Config.primaryColor.r, Config.primaryColor.g, Config.primaryColor.b, Config.tooltipOpacity)
+            radius: Config.tooltipRadius
+
+            Text {
+                id: tooltipLabel
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+                text: root.text
+                color: Config.textColor
+                font {
+                    family: root.monospace ? Config.monoFontFamily : Config.displayFontFamily
+                    pointSize: Config.tooltipLabelSize
+                }
             }
         }
     }
