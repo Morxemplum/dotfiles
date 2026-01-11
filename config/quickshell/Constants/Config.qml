@@ -10,6 +10,7 @@ Singleton {
     // App Defaults
     property string terminalEmu: "kitty"
     property string sysMonitorApp: "btop"
+    property string audioManager: "pwvucontrol"
 
     // Text Constants
     property string displayFontFamily: "AdwaitaSans"

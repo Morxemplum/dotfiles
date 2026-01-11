@@ -165,7 +165,7 @@ Item {
 
     Process {
         id: soundCtl
-        command: ["pwvucontrol"]
+        command: [Config.audioManager]
     }
 
     // TODO: Prompt a password before accessing the clipboard manager. Clipboards can contain sensitive information (e.g. passwords)
