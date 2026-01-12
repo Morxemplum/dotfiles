@@ -21,10 +21,11 @@ LazyLoader {
                 y: Config.barHeight + Config.tooltipPadding
             }
         }
+        // FIXME: Magic numbers
         implicitWidth: 200
         implicitHeight: 40
         color: "transparent"
-        visible: root.active
+        visible: root.active && root.item != null
 
         Rectangle {
             id: background
@@ -71,6 +72,7 @@ LazyLoader {
                     right: parent.right
                     rightMargin: Config.tooltipPadding + Config.tooltipRadius / 2
                 }
+                // FIXME: Magic number
                 width: 40
                 color: Config.appletTextColor
                 text: Audio.volumePercentage + "%"

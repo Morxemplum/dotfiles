@@ -13,7 +13,6 @@ import "../Services"
 PanelWindow {
     id: shellBar
     required property ShellScreen modelData
-    property int activeApplet: Enums.ActiveApplet.None
     screen: modelData
 
     anchors {
