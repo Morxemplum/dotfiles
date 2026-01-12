@@ -6,7 +6,7 @@ import Quickshell.Io
 import QtQml
 import QtQuick
 
-import "../Constants/"
+import "../Constants/Enums/"
 
 // Quickshell does not offer any utility to help assist with networking, so we
 // will need to use processes to try and determine network statuses and other
@@ -17,13 +17,13 @@ import "../Constants/"
 Singleton {
     id: networkRoot
 
-    property int status: Enums.ConnectionStatus.None
+    property int status: ConnectionStatus.Value.None
     property string device
     property string name
     property int wifiStrength
 
     // Up/Down data (in bytes). These must be real as QML int is only signed 32-bit
-    property real totalRcv 
+    property real totalRcv
     property real totalTrans
     property real lastRcv: -1
     property real lastTrans: -1
@@ -44,10 +44,10 @@ Singleton {
                         connectionTypePrc.running = true
                         break;
                     case "limited":
-                        networkRoot.status = Enums.ConnectionStatus.Limited
+                        networkRoot.status = ConnectionStatus.Value.Limited
                         break;
                     default:
-                        networkRoot.status = Enums.ConnectionStatus.None
+                        networkRoot.status = ConnectionStatus.Value.None
                         break;
                 }
             }
@@ -65,18 +65,18 @@ Singleton {
                 networkRoot.device = info[0]
                 switch (info[1]) {
                     case "ethernet":
-                        networkRoot.status = Enums.ConnectionStatus.Ethernet
+                        networkRoot.status = ConnectionStatus.Value.Ethernet
                         break
                     case "wifi":
-                        networkRoot.status = Enums.ConnectionStatus.Wireless
+                        networkRoot.status = ConnectionStatus.Value.Wireless
                         wifiInfoPrc.running = true
                         break
                     default:
-                        networkRoot.status = Enums.ConnectionStatus.Pending
+                        networkRoot.status = ConnectionStatus.Value.Pending
                 }
                 // TODO: Rewrite the command so that it can iterate down the list if the current connection happens to be disconnected
                 if (info[2] == "disconnected") {
-                    networkRoot.status = Enums.ConnectionStatus.None
+                    networkRoot.status = ConnectionStatus.Value.None
                 }
                 networkRoot.name = info[3].trim()
             }
@@ -106,25 +106,25 @@ Singleton {
 
     function getStatusString() {
         switch (networkRoot.status) {
-            case Enums.ConnectionStatus.None:
+            case ConnectionStatus.Value.None:
                 return qsTr("No connection")
-            case Enums.ConnectionStatus.Pending:
+            case ConnectionStatus.Value.Pending:
                 return qsTr("Connecting...")
-            case Enums.ConnectionStatus.Wireless | Enums.ConnectionStatus.Ethernet:
+            case ConnectionStatus.Value.Wireless | ConnectionStatus.Value.Ethernet:
                 return qsTr("Connected")
-            case Enums.ConnectionStatus.Limited:
+            case ConnectionStatus.Value.Limited:
                 return qsTr("Limited")
         }
     }
 
     function connectionInfoStr() {
         switch (networkRoot.status) {
-            case Enums.ConnectionStatus.None | Enums.ConnectionStatus.Pending:
+            case ConnectionStatus.Value.None | ConnectionStatus.Value.Pending:
                 return getStatusString()
             default:
                 let str = networkRoot.name + " (" + networkRoot.device + ")\n"
                 str += qsTr("Status") + ": " + getStatusString() + "\n" 
-                str += (networkRoot.status == Enums.ConnectionStatus.Wireless) ? qsTr("Wi-Fi Signal") + ": " + networkRoot.wifiStrength + "%\n\n" : "\n"
+                str += (networkRoot.status == ConnectionStatus.Value.Wireless) ? qsTr("Wi-Fi Signal") + ": " + networkRoot.wifiStrength + "%\n\n" : "\n"
                 // TODO: Maybe add an option to show the rates in bits instead of bytes?
                 str += qsTr("Data Received") + ": \n" + formatFileSize(networkRoot.totalRcv) + " (" + formatFileSize(networkRoot.rateRcv) + "/s)\n"
                 str += qsTr("Data Transmitted") + ": \n" + formatFileSize(networkRoot.totalTrans) + " (" + formatFileSize(networkRoot.rateTrans) + "/s)"

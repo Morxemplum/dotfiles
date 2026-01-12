@@ -1,0 +1,2 @@
+singleton ActiveApplet 1.0 ActiveApplet.qml
+singleton ConnectionStatus 1.0 ConnectionStatus.qml

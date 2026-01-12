@@ -5,6 +5,7 @@ import Quickshell.Io
 import QtQuick
 
 import "../Constants"
+import "../Constants/Enums"
 import "../Services"
 import "../Applets/Minis" as Applets
 
@@ -101,10 +102,10 @@ Item {
                 }
                 width: Config.iconSize
                 height: Config.iconSize
-                source: (Networking.status == Enums.ConnectionStatus.Ethernet) ? "../themes/svg/ethernet-connection.svg" :
-                        (Networking.status == Enums.ConnectionStatus.Limited) ? "../themes/svg/ethernet-limited-connection.svg" :
-                        (Networking.status == Enums.ConnectionStatus.Wireless) ? "../themes/svg/wifi-" + Math.min(Math.trunc(Networking.wifiStrength / 25), 3) + ".svg" :
-                        (Networking.status == Enums.ConnectionStatus.Pending) ? "../themes/svg/pending-connection.svg" :
+                source: (Networking.status == ConnectionStatus.Value.Ethernet) ? "../themes/svg/ethernet-connection.svg" :
+                        (Networking.status == ConnectionStatus.Value.Limited) ? "../themes/svg/ethernet-limited-connection.svg" :
+                        (Networking.status == ConnectionStatus.Value.Wireless) ? "../themes/svg/wifi-" + Math.min(Math.trunc(Networking.wifiStrength / 25), 3) + ".svg" :
+                        (Networking.status == ConnectionStatus.Value.Pending) ? "../themes/svg/pending-connection.svg" :
                         "../themes/svg/no-connection.svg"
             }
 
