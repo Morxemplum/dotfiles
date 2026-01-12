@@ -5,7 +5,7 @@ import Quickshell
 import QtQuick
 
 Singleton {
-    property string wallpaperPath: "./themes/wallpapers/bees_on_yellow.jpg"
+    property string wallpaperPath: "../themes/wallpapers/bees_on_yellow.jpg"
 
     // App Defaults
     property string terminalEmu: "kitty"

@@ -12,4 +12,12 @@ Singleton {
         Ethernet = 3,
         Limited = 4
     }
+
+    enum ActiveApplet {
+        None = 0,
+        Calendar = 1,
+        AudioMixer = 2,
+        NetworkManagerApplet = 3,
+        NowPlaying = 4
+    }
 }
