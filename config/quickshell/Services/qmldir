@@ -1,4 +1,5 @@
 singleton Audio 1.0 Audio.qml
+singleton Environment 1.0 Environment.qml
 singleton Hyprclients 1.0 Hyprclients.qml
 singleton Networking 1.0 Networking.qml
 singleton SystemMonitor 1.0 SystemMonitor.qml

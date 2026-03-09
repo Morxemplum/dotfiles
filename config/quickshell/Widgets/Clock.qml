@@ -1,15 +1,20 @@
 pragma ComponentBehavior : Bound
+import Quickshell
 import QtQuick
 
+import "../Applets/Calendar" as Calendar
 import "../Constants"
+import "../Constants/Enums"
 import "../Services"
 
 Item {
     id: root
+    property PanelWindow bar
     property color textColor
     property bool hover: false
 
     Rectangle {
+        id: widget
         color: Config.primaryColor
 
         width: parent.width
@@ -31,10 +36,27 @@ Item {
         }
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton
             hoverEnabled: true
 
             onEntered: root.hover = true
             onExited: root.hover = false
+
+            onClicked: mouse => {
+                if (mouse.button === Qt.LeftButton) {
+                    if (Environment.activeApplet === ActiveApplet.Value.Calendar && Environment.appletMonitor == root.bar.screen) {
+                        Environment.activeApplet = ActiveApplet.Value.None
+                        Environment.appletMonitor = null
+                    } else {
+                        Environment.activeApplet = ActiveApplet.Value.Calendar
+                        Environment.appletMonitor = root.bar.screen
+                    }
+                }
+            }
         }
+    }
+    Calendar.Window {
+        bar: root.bar
+        item: widget
     }
 }

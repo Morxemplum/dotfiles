@@ -14,6 +14,7 @@ Singleton {
 
     // Text Constants
     property string displayFontFamily: "AdwaitaSans"
+    property string standardFontFamily: "NotoSans"
     property string monoFontFamily: "NotoSansMono"
     property real labelSize: 10
     property real headerLabelSize: 12
@@ -26,6 +27,7 @@ Singleton {
     property color textColor: '#ffffff'
 
     property color appletBackgroundColor: '#262626'
+    property color appletForegroundColor: '#3e3e3e'
     property color appletTextColor: textColor
     property color toggleInactiveColor: '#4d4d4d'
 
@@ -54,4 +56,12 @@ Singleton {
     // Slider Related Constants
     property real sliderBackgroundRadius: 3
     property real sliderBackgroundHeight: 10
+
+    // Applet Related Constants
+    property real appletPadding: 10
+    property real appletBorderRadius: 10
+    property real appletForegroundRadius: 5
+    property real appletHeaderPointSize: 36
+    property real appletHeader2PointSize: 18
+    property real appletHeader3PointSize: 12
 }

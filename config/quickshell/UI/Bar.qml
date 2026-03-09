@@ -8,6 +8,7 @@ import QtQuick.Effects
 
 import "../Widgets" as Widgets
 import "../Constants"
+import "../Constants/Enums"
 import "../Services"
 
 PanelWindow {
@@ -168,6 +169,7 @@ PanelWindow {
 
         Widgets.Clock {
             id: clock
+            bar: shellBar
             width: 100
             height: parent.height - Config.barVerticalPadding * 2
             textColor: Config.textColor
@@ -186,6 +188,7 @@ PanelWindow {
                 id: clockTooltip
                 bar: shellBar
                 item: clock
+                visibleCondition: Environment.activeApplet != ActiveApplet.Value.Calendar
                 text: Time.time12 + "\n" + Time.dateFull
             }
         }
