@@ -312,7 +312,7 @@
 
     <!-- Program bound keybinds -->
     <keybind key="W-r">
-      <action name="Execute" command="rofi -show drun" />
+      <action name="Execute" command="dms ipc spotlight toggle" />
     </keybind>
 
     <!-- Screenshotting-->
