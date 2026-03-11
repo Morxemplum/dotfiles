@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Properly shut down Dank Material Shell
+dms kill
