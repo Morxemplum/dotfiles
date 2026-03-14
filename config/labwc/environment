@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-##
-## Example ~/.config/labwc/environment file.
-## Uncomment lines starting with one '#' to suit your needs.
-##
 
 ##
 ## Set cursor theme and size. Find system icons themes with:
