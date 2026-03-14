@@ -10,6 +10,10 @@ XCURSOR_THEME=posys_cursor_scalable_black
 XCURSOR_SIZE=32
 
 
+## Add theming functionality to Qt applications
+
+QT_QPA_PLATFORMTHEME=qt6ct
+
 ##
 ## This allows xdg-desktop-portal-wlr to function (e.g. for screen-recording).
 ## It is automatically set to "labwc:wlroots" by labwc though, so it is only
