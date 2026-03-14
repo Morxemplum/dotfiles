@@ -1,0 +1,18 @@
+output DP-2 {
+	mode 3840x2160@59.997
+	position 2560,0
+	scale 1.5
+	alias $PRIMARY_M
+}
+
+output DP-1 {
+	mode 3840x2160@60.0
+	position 0,0
+	scale 1.5
+	alias $SECONDARY_M
+}
+
+profile default {
+	output $PRIMARY_M enable
+	output $SECONDARY_M enable
+}
