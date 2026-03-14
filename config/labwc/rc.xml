@@ -317,7 +317,7 @@
 
     <!-- Screenshotting-->
     <keybind key="Print">
-      <action name="Execute" command="sh -c $HOME/dotfiles/scripts/hypr-screenshot.sh" />
+      <action name="Execute" command="sh -c $HOME/dotfiles/scripts/dms-screenshot.sh" />
     </keybind>
   <!-- keybind for client-list-combined-menu - will center in middle of screen -->
   <!--
