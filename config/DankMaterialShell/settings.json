@@ -173,7 +173,7 @@
   "spotlightCloseNiriOverview": true,
   "spotlightSectionViewModes": {},
   "appDrawerSectionViewModes": {
-    "apps": "grid"
+    "apps": "list"
   },
   "niriOverviewOverlayEnabled": true,
   "dankLauncherV2Size": "compact",
@@ -225,7 +225,7 @@
   "soundVolumeChanged": true,
   "soundPluggedIn": true,
   "acMonitorTimeout": 0,
-  "acLockTimeout": 1800,
+  "acLockTimeout": 300,
   "acSuspendTimeout": 3600,
   "acSuspendBehavior": 0,
   "acProfileName": "",
@@ -362,7 +362,7 @@
     "suspend",
     "restart"
   ],
-  "powerMenuDefaultAction": "logout",
+  "powerMenuDefaultAction": "poweroff",
   "powerMenuGridLayout": false,
   "customPowerActionLock": "",
   "customPowerActionLogout": "",
@@ -411,7 +411,8 @@
         },
         {
           "id": "focusedWindow",
-          "enabled": true
+          "enabled": true,
+          "focusedWindowCompactMode": false
         }
       ],
       "centerWidgets": [
