@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Example autostart file
+
+# Start up Dank Material Shell
+dms run &
+
+# I prefer using Kanshi for the display setup instead of using DMS because it allows for consistency
+kanshi default >/dev/null 2>&1 &
